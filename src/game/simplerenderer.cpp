@@ -8,6 +8,11 @@
 // A01
 #include "game/game_config.h"
 
+#include "render/rhi/rhiinstance.h"
+#include "render/rhi/rhidevice.h"
+#include "render/rhi/rhidevicecontext.h"
+#include "render/rhi/rhioutput.h"
+
 
 /************************************************************************/
 /*                                                                      */
@@ -62,6 +67,80 @@
 /* EXTERNAL FUNCTIONS                                                   */
 /*                                                                      */
 /************************************************************************/
+//------------------------------------------------------------------------
+SimpleRenderer::SimpleRenderer() 
+   : rhi_device(nullptr)
+   , rhi_context(nullptr)
+   , rhi_output(nullptr)
+   , current_target(nullptr) 
+{
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::setup( uint width, uint height ) 
+{
+   RHIInstance *ri = RHIInstance::GetInstance();
+   ri->create_output( &rhi_device, &rhi_context, &rhi_output, width, height );
+
+   rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 1" );
+
+   set_render_target(nullptr);
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_title( char const *new_title ) 
+{
+   rhi_output->window->set_title( new_title );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::destroy() 
+{
+   delete rhi_output;
+   delete rhi_context;
+   delete rhi_device;
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_render_target( Texture2D *color_target )
+{
+   if (color_target != nullptr) {
+      current_target = color_target; 
+   } else {
+      current_target = rhi_output->get_render_target();
+   }
+}
+
+
+//------------------------------------------------------------------------
+void SimpleRenderer::process_messages()
+{
+   rhi_output->window->process_messages();
+}
+
+//------------------------------------------------------------------------
+bool SimpleRenderer::is_closed() const
+{
+   return rhi_output->window->is_closed();
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::clear_color( rgba_fl const &color ) 
+{
+   rhi_context->clear_color_target( current_target, color );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::clear_target_color( Texture2D *target, rgba_fl const &color )
+{
+   rhi_context->clear_color_target( target, color );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::present()
+{
+   rhi_output->present();
+}
 
 /************************************************************************/
 /*                                                                      */

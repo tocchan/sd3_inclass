@@ -13,6 +13,7 @@
 #include "render/rhi/rhidevicecontext.h"
 #include "render/rhi/rhioutput.h"
 #include "game/game_config.h"
+#include "game/simplerenderer.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -92,9 +93,7 @@ class Game
       void cleanup_rendering();
 
       //------------------------------------------------------------------------
-      RHIDevice *rhi_device;
-      RHIDeviceContext *rhi_context;
-      RHIOutput *rhi_output;
+      SimpleRenderer renderer;
 
       eQuitReason quit_reason;
       GameState *current_state;

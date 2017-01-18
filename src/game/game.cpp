@@ -72,7 +72,6 @@ Game::Game()
 {
    current_state = nullptr;
 
-
    sInstance = this;
 }
 
@@ -103,7 +102,7 @@ void Game::start()
 void Game::run_frame()
 {
    // Process Window Messages
-   rhi_output->window->process_messages();
+   renderer.process_messages();
 
    // update sim
    update_sim();
@@ -129,7 +128,7 @@ void Game::quit( eQuitReason reason /*= QUITREASON_USER*/ )
 //------------------------------------------------------------------------
 void Game::update_sim()
 {
-   if (rhi_output->window->is_closed()) {
+   if (renderer.is_closed()) {
       quit();
       return;
    }
@@ -138,8 +137,8 @@ void Game::update_sim()
 //------------------------------------------------------------------------
 void Game::render()
 {
-   rhi_context->clear_color_target( rhi_output->get_render_target(), 0xff0000ff );
-   rhi_output->present();
+   renderer.clear_color( 0x9288ffff );
+   renderer.present();
 }
 
 //------------------------------------------------------------------------
@@ -149,19 +148,13 @@ void Game::init_rendering()
    uint width = DEFAULT_WINDOW_WIDTH;
    uint height = DEFAULT_WINDOW_HEIGHT;
 
-   RHIInstance *ri = RHIInstance::GetInstance();
-   ri->create_output( &rhi_device, &rhi_context, &rhi_output, width, height );
-
-   rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 1" );
+   renderer.setup( width, height );
 }
 
 //------------------------------------------------------------------------
 void Game::cleanup_rendering()
 {
-   rhi_output->close();
-   delete rhi_output;
-   delete rhi_context;
-   delete rhi_device;
+   renderer.destroy();
 }
 
 /************************************************************************/
