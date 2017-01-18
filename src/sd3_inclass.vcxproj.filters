@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="game\game.cpp" />
+    <ClCompile Include="game\simplerenderer.cpp" />
+    <ClCompile Include="core\window.cpp" />
+    <ClCompile Include="core\rgba.cpp" />
+    <ClCompile Include="render\rhi\dx11.cpp" />
+    <ClCompile Include="render\rhi\rhidevice.cpp" />
+    <ClCompile Include="render\rhi\rhidevicecontext.cpp" />
+    <ClCompile Include="render\rhi\rhiinstance.cpp" />
+    <ClCompile Include="render\rhi\rhioutput.cpp" />
+    <ClCompile Include="render\rhi\texture2d.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game\game_config.h" />
+    <ClInclude Include="game\game.h" />
+    <ClInclude Include="game\simplerenderer.h" />
+    <ClInclude Include="core\types.h" />
+    <ClInclude Include="core\window.h" />
+    <ClInclude Include="core\bit.h" />
+    <ClInclude Include="core\rgba.h" />
+    <ClInclude Include="core\endian.h" />
+    <ClInclude Include="render\rhi\dx11.h" />
+    <ClInclude Include="render\rhi\rhidevice.h" />
+    <ClInclude Include="render\rhi\rhidevicecontext.h" />
+    <ClInclude Include="render\rhi\rhiinstance.h" />
+    <ClInclude Include="render\rhi\rhioutput.h" />
+    <ClInclude Include="render\rhi\texture2d.h" />
+    <ClInclude Include="render\rhi\types.h" />
+    <ClInclude Include="render\vertex.h" />
+    <ClInclude Include="core\util.h" />
+  </ItemGroup>
+</Project>
