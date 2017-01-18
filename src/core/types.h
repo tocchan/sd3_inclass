@@ -14,6 +14,7 @@
 #pragma warning( disable : 4800 )  // cast warnings
 // #pragma warning( disable : 4244 )  // possible loss of data
 #pragma warning( disable : 4577 )  // <exception> causes a warning now if you compile without exceptions, dammit windows
+#pragma warning( disable : 4530 )  // <exception> causes a warning now if you compile without exceptions, dammit windows
 
 /************************************************************************/
 /*                                                                      */
