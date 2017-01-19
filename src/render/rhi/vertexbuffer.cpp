@@ -3,19 +3,9 @@
 /* INCLUDE                                                              */
 /*                                                                      */
 /************************************************************************/
-#include "game/simplerenderer.h"
-
-// A01
-#include "game/game_config.h"
-
-#include "render/rhi/rhiinstance.h"
-#include "render/rhi/rhidevice.h"
-#include "render/rhi/rhidevicecontext.h"
-#include "render/rhi/rhioutput.h"
-
-#include "render/rhi/shaderprogram.h"
 #include "render/rhi/vertexbuffer.h"
 
+#include "render/rhi/rhidevice.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -71,125 +61,35 @@
 /*                                                                      */
 /************************************************************************/
 //------------------------------------------------------------------------
-SimpleRenderer::SimpleRenderer() 
-   : rhi_device(nullptr)
-   , rhi_context(nullptr)
-   , rhi_output(nullptr)
-   , current_target(nullptr) 
+VertexBuffer::VertexBuffer( RHIDevice *device, 
+   vertex_t const *vertices, 
+   uint const vertex_count )
 {
+   // First, describe the buffer
+   D3D11_BUFFER_DESC vb_desc;
+   memset( &vb_desc, 0, sizeof(vb_desc) );
+
+   vb_desc.ByteWidth = sizeof(vertex_t) * vertex_count;  // How much data are we putting into this buffer
+   vb_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;         // What can we bind this data as (in this case, only vertex data)
+   vb_desc.Usage = D3D11_USAGE_IMMUTABLE;                // Hint on how this memory is used (in this case, it is immutable, or constant - can't be changed)
+                                                         // for limitations/strenghts of each, see;  
+                                                         //    https://msdn.microsoft.com/en-us/library/windows/desktop/ff476259(v=vs.85).aspx
+   vb_desc.StructureByteStride = sizeof(vertex_t);       // How large is each element in this buffer
+
+   // Next, setup the initial data (required since this is an immutable buffer - so it must be instantiated at creation time)
+   D3D11_SUBRESOURCE_DATA initial_data;
+   memset( &initial_data, 0, sizeof(initial_data) );
+   initial_data.pSysMem = vertices;
+
+   // Finally create the vertex buffer
+   dx_buffer = nullptr;
+   device->dx_device->CreateBuffer( &vb_desc, &initial_data, &dx_buffer );
 }
 
 //------------------------------------------------------------------------
-void SimpleRenderer::setup( uint width, uint height ) 
+VertexBuffer::~VertexBuffer()
 {
-   RHIInstance *ri = RHIInstance::GetInstance();
-   ri->create_output( &rhi_device, &rhi_context, &rhi_output, width, height );
-
-   rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 1" );
-
-   set_render_target(nullptr);
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::set_title( char const *new_title ) 
-{
-   rhi_output->window->set_title( new_title );
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::destroy() 
-{
-   delete rhi_output;
-   delete rhi_context;
-   delete rhi_device;
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::set_render_target( Texture2D *color_target )
-{
-   if (color_target != nullptr) {
-      current_target = color_target; 
-   } else {
-      current_target = rhi_output->get_render_target();
-   }
-
-   rhi_context->dx_context->OMSetRenderTargets(1,
-      &current_target->dx_rtv,
-      nullptr);
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::set_viewport( uint x, uint y, uint w, uint h ) 
-{
-   // Also, set which region of the screen we're rendering to, in this case, all of it 
-   D3D11_VIEWPORT viewport;
-   memset( &viewport, 0, sizeof(viewport) );
-   viewport.TopLeftX = (FLOAT)x;
-   viewport.TopLeftY = (FLOAT)y;
-   viewport.Width = (FLOAT)w;
-   viewport.Height = (FLOAT)h;
-   viewport.MinDepth = 0.0f;        // must be between 0 and 1 (defualt is 0);
-   viewport.MaxDepth = 1.0f;        // must be between 0 and 1 (default is 1)
-
-   rhi_context->dx_context->RSSetViewports(1, &viewport);
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::process_messages()
-{
-   rhi_output->window->process_messages();
-}
-
-//------------------------------------------------------------------------
-bool SimpleRenderer::is_closed() const
-{
-   return rhi_output->window->is_closed();
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::clear_color( rgba_fl const &color ) 
-{
-   rhi_context->clear_color_target( current_target, color );
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::clear_target_color( Texture2D *target, rgba_fl const &color )
-{
-   rhi_context->clear_color_target( target, color );
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::present()
-{
-   rhi_output->present();
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::set_shader( ShaderProgram *program ) 
-{
-   rhi_context->dx_context->VSSetShader( program->dx_vertex_shader, nullptr, 0U );
-   rhi_context->dx_context->PSSetShader( program->dx_fragment_shader, nullptr, 0U );
-   rhi_context->dx_context->IASetInputLayout( program->dx_input_layout );
-}
-
-//------------------------------------------------------------------------
-void SimpleRenderer::draw( ePrimitiveType topology, 
-   VertexBuffer *vbo, 
-   uint const vertex_count ) 
-{
-   D3D11_PRIMITIVE_TOPOLOGY d3d_prim;
-   switch (topology) {
-      case PRIMITIVE_TRIANGLES: 
-      default:
-         d3d_prim = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-   }
-
-   rhi_context->dx_context->IASetPrimitiveTopology( d3d_prim );
-   uint stride = sizeof(vertex_t);
-   uint offsets = 0;
-   rhi_context->dx_context->IASetVertexBuffers( 0, 1, &vbo->dx_buffer, &stride, &offsets );
-
-   rhi_context->dx_context->Draw( vertex_count, 0 );
+   DX_SAFE_RELEASE(dx_buffer);
 }
 
 /************************************************************************/

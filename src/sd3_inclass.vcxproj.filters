@@ -12,6 +12,10 @@
     <ClCompile Include="render\rhi\rhiinstance.cpp" />
     <ClCompile Include="render\rhi\rhioutput.cpp" />
     <ClCompile Include="render\rhi\texture2d.cpp" />
+    <ClCompile Include="render\rhi\shaderprogram.cpp" />
+    <ClCompile Include="core\file.cpp" />
+    <ClCompile Include="core\log.cpp" />
+    <ClCompile Include="render\rhi\vertexbuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -31,5 +35,9 @@
     <ClInclude Include="render\rhi\types.h" />
     <ClInclude Include="render\vertex.h" />
     <ClInclude Include="core\util.h" />
+    <ClInclude Include="render\rhi\shaderprogram.h" />
+    <ClInclude Include="core\file.h" />
+    <ClInclude Include="core\log.h" />
+    <ClInclude Include="render\rhi\vertexbuffer.h" />
   </ItemGroup>
 </Project>

@@ -10,6 +10,8 @@
 #include "game/game_config.h"
 
 #include "render/rhi/rhiinstance.h"
+#include "render/rhi/shaderprogram.h"
+#include "render/rhi/vertexbuffer.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -137,7 +139,15 @@ void Game::update_sim()
 //------------------------------------------------------------------------
 void Game::render()
 {
+   renderer.set_render_target( nullptr );
    renderer.clear_color( 0x9288ffff );
+
+   renderer.set_viewport( 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
+
+   renderer.set_shader( my_shader );
+
+   renderer.draw( PRIMITIVE_TRIANGLES, tri_vbo, 3 );
+
    renderer.present();
 }
 
@@ -149,11 +159,31 @@ void Game::init_rendering()
    uint height = DEFAULT_WINDOW_HEIGHT;
 
    renderer.setup( width, height );
+
+   // my_shader = new ShaderProgram( renderer.rhi_device, "hlsl/imageeffect/nop.hlsl" );
+   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_color.hlsl" );
+
+   // Create vertices
+   vertex_t vertices[3] = {
+      vertex_t( vec3( -0.5f, -0.5f, 0.0f ) ), 
+      vertex_t( vec3(  0.0f,  0.5f, 0.0f ) ), 
+      vertex_t( vec3(  0.5f, -0.5f, 0.0f ) ),
+   };
+   
+   tri_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 3 );
 }
 
 //------------------------------------------------------------------------
 void Game::cleanup_rendering()
 {
+   // delete vb
+   delete tri_vbo;
+
+   // delete shader
+   delete my_shader;
+   my_shader = nullptr;
+
+   // cleanup renderer
    renderer.destroy();
 }
 

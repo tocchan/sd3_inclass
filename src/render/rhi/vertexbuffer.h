@@ -1,6 +1,6 @@
 #pragma once
-#if !defined( __RENDER_DEVICE__ )
-#define __RENDER_DEVICE__
+#if !defined( __RHI_VERTEX_BUFFER__ )
+#define __RHI_VERTEX_BUFFER__
 
 /************************************************************************/
 /*                                                                      */
@@ -10,8 +10,6 @@
 #include "render/rhi/dx11.h"
 
 #include "render/vertex.h"
-#include "render/rhi/texture2d.h"
-#include "render/rhi/types.h"
 
 
 /************************************************************************/
@@ -31,14 +29,7 @@
 /* TYPES                                                                */
 /*                                                                      */
 /************************************************************************/
-class RHIDeviceContext;    // Potential Display/Background worker
-class RHIDevice;     // physical GPU
-class RHIInstance;  // System level singleton
-class RHIOutput;
-class Texture2D;
-
-class ShaderProgram;
-class VertexBuffer;
+class RHIDevice;
 
 /************************************************************************/
 /*                                                                      */
@@ -51,32 +42,20 @@ class VertexBuffer;
 /* CLASSES                                                              */
 /*                                                                      */
 /************************************************************************/
-
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// A single GPU
-// All contexts derived from this
-// device may use this devices resources
-class RHIDevice
+class VertexBuffer 
 {
+   public:
+      VertexBuffer( RHIDevice *owner, 
+         vertex_t const *vertices, 
+         uint const vertex_count );
+      ~VertexBuffer(); 
+
+      inline bool is_valid() const { return (dx_buffer != nullptr); }
 
    public:
-      RHIDevice( RHIInstance *owner, ID3D11Device *dxd );
-      ~RHIDevice();
-
-      RHIDeviceContext* get_immediate_context() { return immediate_context; }
-      
-      ShaderProgram* create_shader_from_hlsl_file( char const *filename );
-
-      VertexBuffer* create_vertex_buffer( vertex_t *vertices, uint vertex_count );
-      
-   public:
-      ID3D11Device *dx_device;
-
-      RHIInstance *instance;         // hold a reference so the system doesn't shutdown without me.
-      RHIDeviceContext *immediate_context; // reference to the immediate context
-
-};
+      ID3D11Buffer *dx_buffer;
+}; 
 
 /************************************************************************/
 /*                                                                      */
@@ -89,6 +68,4 @@ class RHIDevice
 /* FUNCTION PROTOTYPES                                                  */
 /*                                                                      */
 /************************************************************************/
-
-
 #endif 

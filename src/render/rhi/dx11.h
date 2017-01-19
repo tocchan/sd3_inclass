@@ -22,6 +22,9 @@
 // #pragma comment( lib, "d3d10.lib" )
 #pragma comment( lib, "DXGI.lib" )
 
+// For Shader Compilation
+#include <d3dcompiler.h>
+#pragma comment( lib, "d3dcompiler.lib" )
 
 /************************************************************************/
 /*                                                                      */

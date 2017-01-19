@@ -340,21 +340,26 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\log.cpp" />
     <ClCompile Include="core\rgba.cpp" />
     <ClCompile Include="core\window.cpp" />
     <ClCompile Include="game\game.cpp" />
     <ClCompile Include="game\simplerenderer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render\rhi\dx11.cpp" />
+    <ClCompile Include="core\file.cpp" />
     <ClCompile Include="render\rhi\rhidevice.cpp" />
     <ClCompile Include="render\rhi\rhidevicecontext.cpp" />
     <ClCompile Include="render\rhi\rhiinstance.cpp" />
     <ClCompile Include="render\rhi\rhioutput.cpp" />
+    <ClCompile Include="render\rhi\shaderprogram.cpp" />
     <ClCompile Include="render\rhi\texture2d.cpp" />
+    <ClCompile Include="render\rhi\vertexbuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\bit.h" />
     <ClInclude Include="core\endian.h" />
+    <ClInclude Include="core\log.h" />
     <ClInclude Include="core\rgba.h" />
     <ClInclude Include="core\types.h" />
     <ClInclude Include="core\util.h" />
@@ -363,12 +368,15 @@
     <ClInclude Include="game\game_config.h" />
     <ClInclude Include="game\simplerenderer.h" />
     <ClInclude Include="render\rhi\dx11.h" />
+    <ClInclude Include="core\file.h" />
     <ClInclude Include="render\rhi\rhidevice.h" />
     <ClInclude Include="render\rhi\rhidevicecontext.h" />
     <ClInclude Include="render\rhi\rhiinstance.h" />
     <ClInclude Include="render\rhi\rhioutput.h" />
+    <ClInclude Include="render\rhi\shaderprogram.h" />
     <ClInclude Include="render\rhi\texture2d.h" />
     <ClInclude Include="render\rhi\types.h" />
+    <ClInclude Include="render\rhi\vertexbuffer.h" />
     <ClInclude Include="render\vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

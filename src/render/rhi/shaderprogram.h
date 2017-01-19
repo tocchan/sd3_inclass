@@ -1,6 +1,6 @@
 #pragma once
-#if !defined( __RENDER_DEVICE__ )
-#define __RENDER_DEVICE__
+#if !defined( __RHI_SHADERPROGRAM__ )
+#define __RHI_SHADERPROGRAM__
 
 /************************************************************************/
 /*                                                                      */
@@ -8,11 +8,6 @@
 /*                                                                      */
 /************************************************************************/
 #include "render/rhi/dx11.h"
-
-#include "render/vertex.h"
-#include "render/rhi/texture2d.h"
-#include "render/rhi/types.h"
-
 
 /************************************************************************/
 /*                                                                      */
@@ -31,14 +26,7 @@
 /* TYPES                                                                */
 /*                                                                      */
 /************************************************************************/
-class RHIDeviceContext;    // Potential Display/Background worker
-class RHIDevice;     // physical GPU
-class RHIInstance;  // System level singleton
-class RHIOutput;
-class Texture2D;
-
-class ShaderProgram;
-class VertexBuffer;
+class RHIDevice;
 
 /************************************************************************/
 /*                                                                      */
@@ -51,31 +39,49 @@ class VertexBuffer;
 /* CLASSES                                                              */
 /*                                                                      */
 /************************************************************************/
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// A single GPU
-// All contexts derived from this
-// device may use this devices resources
-class RHIDevice
+enum eShaderStage 
 {
+   SHADER_VERTEX,    // maps to target "vs_5_0", or Vertex Shader Model 5 (currently latest)
+   SHADER_FRAGMENT,  // maps to target "ps_5_0", or Pixel Shader Model 5 (currently latest)
+};
+
+// Technically a ShaderProgram is just the program running on the GPU (or multiple
+// programs as part of a pipeline).
+class ShaderProgram
+{
+   public:
+      ShaderProgram( RHIDevice *device, 
+         ID3D11VertexShader *vs, ID3D11PixelShader *fs, 
+         ID3DBlob *vs_bytecode, ID3DBlob *fs_bytecode );
+
+      ~ShaderProgram()
+      {
+         DX_SAFE_RELEASE(dx_vertex_shader);
+         DX_SAFE_RELEASE(dx_fragment_shader);
+         DX_SAFE_RELEASE(dx_input_layout);
+         DX_SAFE_RELEASE(vs_byte_code);
+         DX_SAFE_RELEASE(fs_byte_code);
+      }
+
+      // feel free to add in more methods to help with the creation process if you want.
+      void create_input_layout( RHIDevice *device );
+
+      inline bool is_valid() const { return (dx_vertex_shader != nullptr) && (dx_fragment_shader != nullptr); }
 
    public:
-      RHIDevice( RHIInstance *owner, ID3D11Device *dxd );
-      ~RHIDevice();
+      // All the steps to this (could be split out to a ShaderStage)
+      ID3D11VertexShader *dx_vertex_shader;
+      ID3D11PixelShader *dx_fragment_shader;
 
-      RHIDeviceContext* get_immediate_context() { return immediate_context; }
-      
-      ShaderProgram* create_shader_from_hlsl_file( char const *filename );
+      // Input Layout - for now, we're going 
+      // to assume every shader makes their own
+      // for simplicity, but honestly you should make these
+      // based on need
+      ID3D11InputLayout *dx_input_layout;
 
-      VertexBuffer* create_vertex_buffer( vertex_t *vertices, uint vertex_count );
-      
-   public:
-      ID3D11Device *dx_device;
-
-      RHIInstance *instance;         // hold a reference so the system doesn't shutdown without me.
-      RHIDeviceContext *immediate_context; // reference to the immediate context
-
+      // [OPTIONAL] ByteCode - only need to keep it around if using Reflection
+      ID3DBlob *vs_byte_code;
+      ID3DBlob *fs_byte_code;
 };
 
 /************************************************************************/
@@ -89,6 +95,4 @@ class RHIDevice
 /* FUNCTION PROTOTYPES                                                  */
 /*                                                                      */
 /************************************************************************/
-
-
 #endif 

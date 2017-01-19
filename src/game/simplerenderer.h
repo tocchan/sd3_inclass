@@ -79,13 +79,7 @@ class SimpleRenderer
       void set_render_target( Texture2D *color_target );
 
       // [A02]
-      void set_viewport( uint x, uint y, uint width, uint height ) 
-      {
-         UNREFERENCED_PARAMETER(x);
-         UNREFERENCED_PARAMETER(y);
-         UNREFERENCED_PARAMETER(width);
-         UNREFERENCED_PARAMETER(height);
-      }
+      void set_viewport( uint x, uint y, uint width, uint height );
 
       // [A02: Optional]
       // Set the viewport using percentages of the size of the current render target.
@@ -109,10 +103,7 @@ class SimpleRenderer
       void present();
       
       // [A02]
-      void set_shader( ShaderProgram *shader ) 
-      {
-         UNREFERENCED_PARAMETER(shader);
-      }
+      void set_shader( ShaderProgram *shader );
     
       // [A02]
       void set_texture( uint texture_index, Texture2D *texture ) 
@@ -135,12 +126,7 @@ class SimpleRenderer
       // Indexed is optional - though highly encouraged to do 
       // during this assignment as it is the easiest assignment to 
       // implement them with
-      void draw( ePrimitiveType topology, VertexBuffer *vbo, uint const vertex_count ) 
-      {
-         UNREFERENCED_PARAMETER(topology);
-         UNREFERENCED_PARAMETER(vbo);
-         UNREFERENCED_PARAMETER(vertex_count);
-      }
+      void draw( ePrimitiveType topology, VertexBuffer *vbo, uint const vertex_count );
 
       void draw_indexed( ePrimitiveType topology, VertexBuffer *vbo, IndexBuffer *ibo, uint const vertex_count ) 
       {

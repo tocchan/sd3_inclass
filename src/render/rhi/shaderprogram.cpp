@@ -1,18 +1,12 @@
-#pragma once
-#if !defined( __RENDER_DEVICE__ )
-#define __RENDER_DEVICE__
-
 /************************************************************************/
 /*                                                                      */
 /* INCLUDE                                                              */
 /*                                                                      */
 /************************************************************************/
-#include "render/rhi/dx11.h"
+#include "shaderprogram.h"
 
 #include "render/vertex.h"
-#include "render/rhi/texture2d.h"
-#include "render/rhi/types.h"
-
+#include "render/rhi/rhidevice.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -31,14 +25,6 @@
 /* TYPES                                                                */
 /*                                                                      */
 /************************************************************************/
-class RHIDeviceContext;    // Potential Display/Background worker
-class RHIDevice;     // physical GPU
-class RHIInstance;  // System level singleton
-class RHIOutput;
-class Texture2D;
-
-class ShaderProgram;
-class VertexBuffer;
 
 /************************************************************************/
 /*                                                                      */
@@ -52,43 +38,72 @@ class VertexBuffer;
 /*                                                                      */
 /************************************************************************/
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// A single GPU
-// All contexts derived from this
-// device may use this devices resources
-class RHIDevice
-{
-
-   public:
-      RHIDevice( RHIInstance *owner, ID3D11Device *dxd );
-      ~RHIDevice();
-
-      RHIDeviceContext* get_immediate_context() { return immediate_context; }
-      
-      ShaderProgram* create_shader_from_hlsl_file( char const *filename );
-
-      VertexBuffer* create_vertex_buffer( vertex_t *vertices, uint vertex_count );
-      
-   public:
-      ID3D11Device *dx_device;
-
-      RHIInstance *instance;         // hold a reference so the system doesn't shutdown without me.
-      RHIDeviceContext *immediate_context; // reference to the immediate context
-
-};
+/************************************************************************/
+/*                                                                      */
+/* LOCAL VARIABLES                                                      */
+/*                                                                      */
+/************************************************************************/
 
 /************************************************************************/
 /*                                                                      */
 /* GLOBAL VARIABLES                                                     */
 /*                                                                      */
 /************************************************************************/
+//------------------------------------------------------------------------
+ShaderProgram::ShaderProgram( RHIDevice *device,
+   ID3D11VertexShader *vs, ID3D11PixelShader *fs, 
+   ID3DBlob *vs_bytecode, ID3DBlob *fs_bytecode )
+   : dx_vertex_shader(vs)
+   , dx_fragment_shader(fs)
+   , vs_byte_code(vs_bytecode)
+   , fs_byte_code(fs_bytecode)
+{
+   dx_input_layout = nullptr;
+   create_input_layout( device );
+}
+
+//------------------------------------------------------------------------
+void ShaderProgram::create_input_layout( RHIDevice *device ) 
+{
+   D3D11_INPUT_ELEMENT_DESC desc[1];
+   memset( desc, 0, sizeof(desc) );
+
+   // 
+   desc[0].SemanticName = "POSITION";
+   desc[0].SemanticIndex = 0;
+   desc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT; 
+   desc[0].InputSlot = 0U;
+   desc[0].AlignedByteOffset = offsetof( vertex_t, position );
+   desc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA; 
+   desc[0].InstanceDataStepRate = 0U;
+
+   device->dx_device->CreateInputLayout( desc, 
+      ARRAYSIZE(desc), 
+      vs_byte_code->GetBufferPointer(), 
+      vs_byte_code->GetBufferSize(), 
+      &dx_input_layout );
+}
 
 /************************************************************************/
 /*                                                                      */
-/* FUNCTION PROTOTYPES                                                  */
+/* LOCAL FUNCTIONS                                                      */
 /*                                                                      */
 /************************************************************************/
 
+/************************************************************************/
+/*                                                                      */
+/* EXTERNAL FUNCTIONS                                                   */
+/*                                                                      */
+/************************************************************************/
 
-#endif 
+/************************************************************************/
+/*                                                                      */
+/* COMMANDS                                                             */
+/*                                                                      */
+/************************************************************************/
+
+/************************************************************************/
+/*                                                                      */
+/* UNIT TESTS                                                           */
+/*                                                                      */
+/************************************************************************/

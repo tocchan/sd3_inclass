@@ -94,12 +94,16 @@ class Game
 
       //------------------------------------------------------------------------
       SimpleRenderer renderer;
+      ShaderProgram *my_shader;
+      VertexBuffer *tri_vbo;
 
       eQuitReason quit_reason;
       GameState *current_state;
 
       //------------------------------------------------------------------------
       static Game *sInstance;
+
+
 };
 
 
