@@ -11,6 +11,7 @@ struct vertex_to_fragment_t
 };
 
 
+
 /* YES */
 
 // NOP VERTEX FUNCTION

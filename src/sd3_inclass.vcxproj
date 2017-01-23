@@ -353,6 +353,7 @@
     <ClCompile Include="render\rhi\rhidevicecontext.cpp" />
     <ClCompile Include="render\rhi\rhiinstance.cpp" />
     <ClCompile Include="render\rhi\rhioutput.cpp" />
+    <ClCompile Include="render\rhi\sampler.cpp" />
     <ClCompile Include="render\rhi\shaderprogram.cpp" />
     <ClCompile Include="render\rhi\texture2d.cpp" />
     <ClCompile Include="render\rhi\vertexbuffer.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="render\rhi\rhidevicecontext.h" />
     <ClInclude Include="render\rhi\rhiinstance.h" />
     <ClInclude Include="render\rhi\rhioutput.h" />
+    <ClInclude Include="render\rhi\sampler.h" />
     <ClInclude Include="render\rhi\shaderprogram.h" />
     <ClInclude Include="render\rhi\texture2d.h" />
     <ClInclude Include="render\rhi\types.h" />

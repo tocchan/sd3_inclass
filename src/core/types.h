@@ -168,4 +168,12 @@ inline int Compare( T const &a, T const &b )
    return a - b;
 }
 
+//------------------------------------------------------------------------
+template <typename T>
+inline void MemZero( T *ptr ) 
+{
+   memset( ptr, 0, sizeof(T) );
+}
+
+
 #endif 
