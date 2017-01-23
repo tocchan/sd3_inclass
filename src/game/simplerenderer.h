@@ -106,20 +106,11 @@ class SimpleRenderer
       void set_shader( ShaderProgram *shader );
     
       // [A02]
-      void set_texture( uint texture_index, Texture2D *texture ) 
-      {
-         UNREFERENCED_PARAMETER(texture_index);
-         UNREFERENCED_PARAMETER(texture);
-      }
-
-      inline void set_texture( Texture2D *texture ) { set_texture( 0, texture ); }
+      void set_texture2d( uint texture_index, Texture2D *texture );
+      inline void set_texture2d( Texture2D *texture ) { set_texture2d( 0, texture ); }
 
       // [A02]
-      void set_sampler( uint sampler_index, Sampler *sampler ) 
-      {
-         UNREFERENCED_PARAMETER(sampler_index);
-         UNREFERENCED_PARAMETER(sampler);
-      }
+      void set_sampler( uint sampler_index, Sampler *sampler );
       inline void set_sampler( Sampler *sampler ) { set_sampler( 0, sampler ); }
 
       // [A02]

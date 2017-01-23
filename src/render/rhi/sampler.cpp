@@ -74,6 +74,12 @@ Sampler::Sampler( RHIDevice *owner, eFilterMode min, eFilterMode mag )
 }
 
 //------------------------------------------------------------------------
+Sampler::~Sampler()
+{
+   DX_SAFE_RELEASE(dx_sampler);
+}
+
+//------------------------------------------------------------------------
 static D3D11_FILTER DXGetFilterMode( eFilterMode min, eFilterMode mag )
 {
    if (min == FILTER_POINT) {

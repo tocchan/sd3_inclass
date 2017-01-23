@@ -120,15 +120,9 @@ void Game::start()
 
    renderer.rhi_output->window->set_custom_message_handler( GameMessageHandler );
 
-   // Test
-   Image image;
-   image.load_from_file( "image/testcube.jpg" );
-
-   // make sure this loaded in correclty
-   if (image.is_valid()) {
-      int x = 0;
-      x++;
-   }
+   // Create Resources
+   tex_sample = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
+   point_sampler = new Sampler( renderer.rhi_device, FILTER_POINT, FILTER_POINT );
 };
 
 //------------------------------------------------------------------------
@@ -176,6 +170,8 @@ void Game::render()
    renderer.set_viewport( 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
 
    renderer.set_shader( my_shader );
+   renderer.set_texture2d( tex_sample );
+   renderer.set_sampler( point_sampler );
 
    renderer.draw( PRIMITIVE_TRIANGLES, tri_vbo, 6 );
 
@@ -192,7 +188,7 @@ void Game::init_rendering()
    renderer.setup( width, height );
 
    // my_shader = new ShaderProgram( renderer.rhi_device, "hlsl/imageeffect/nop.hlsl" );
-   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_color.hlsl" );
+   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_textured.hlsl" );
 
    // Create vertices
    vertex_t vertices[] = {
@@ -212,6 +208,11 @@ void Game::cleanup_rendering()
 {
    // delete vb
    delete tri_vbo;
+   delete tex_sample;
+   delete point_sampler;
+   tri_vbo = nullptr;
+   tex_sample = nullptr;
+   point_sampler = nullptr;
 
    // delete shader
    delete my_shader;

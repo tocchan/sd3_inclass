@@ -13,8 +13,10 @@
 #include "render/rhi/rhidevicecontext.h"
 #include "render/rhi/rhioutput.h"
 
+#include "render/rhi/sampler.h"
 #include "render/rhi/shaderprogram.h"
 #include "render/rhi/vertexbuffer.h"
+
 
 
 /************************************************************************/
@@ -170,6 +172,20 @@ void SimpleRenderer::set_shader( ShaderProgram *program )
    rhi_context->dx_context->VSSetShader( program->dx_vertex_shader, nullptr, 0U );
    rhi_context->dx_context->PSSetShader( program->dx_fragment_shader, nullptr, 0U );
    rhi_context->dx_context->IASetInputLayout( program->dx_input_layout );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_texture2d( uint tex_index, Texture2D *tex ) 
+{
+   rhi_context->dx_context->VSSetShaderResources( tex_index, 1, &tex->dx_srv );
+   rhi_context->dx_context->PSSetShaderResources( tex_index, 1, &tex->dx_srv );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_sampler( uint samp_index, Sampler *samp ) 
+{
+   rhi_context->dx_context->VSSetSamplers( samp_index, 1, &samp->dx_sampler );
+   rhi_context->dx_context->PSSetSamplers( samp_index, 1, &samp->dx_sampler );
 }
 
 //------------------------------------------------------------------------

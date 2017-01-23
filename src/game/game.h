@@ -15,6 +15,9 @@
 #include "game/game_config.h"
 #include "game/simplerenderer.h"
 
+#include "render/rhi/sampler.h"
+#include "render/rhi/texture2d.h"
+
 /************************************************************************/
 /*                                                                      */
 /* DEFINES AND CONSTANTS                                                */
@@ -96,6 +99,9 @@ class Game
       SimpleRenderer renderer;
       ShaderProgram *my_shader;
       VertexBuffer *tri_vbo;
+
+      Texture2D *tex_sample;
+      Sampler *point_sampler;
 
       eQuitReason quit_reason;
       GameState *current_state;
