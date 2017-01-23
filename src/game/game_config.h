@@ -8,7 +8,7 @@
 /*                                                                      */
 /************************************************************************/
 
-#define DEFAULT_WINDOW_WIDTH   (1900)
-#define DEFAULT_WINDOW_HEIGHT  (1900)
+#define DEFAULT_WINDOW_WIDTH   (1280)
+#define DEFAULT_WINDOW_HEIGHT  (720)
 
 #endif 

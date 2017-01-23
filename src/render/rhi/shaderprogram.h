@@ -50,25 +50,24 @@ enum eShaderStage
 class ShaderProgram
 {
    public:
-      ShaderProgram( RHIDevice *device, 
-         ID3D11VertexShader *vs, ID3D11PixelShader *fs, 
-         ID3DBlob *vs_bytecode, ID3DBlob *fs_bytecode );
-
-      ~ShaderProgram()
-      {
-         DX_SAFE_RELEASE(dx_vertex_shader);
-         DX_SAFE_RELEASE(dx_fragment_shader);
-         DX_SAFE_RELEASE(dx_input_layout);
-         DX_SAFE_RELEASE(vs_byte_code);
-         DX_SAFE_RELEASE(fs_byte_code);
-      }
+      ShaderProgram( RHIDevice *device );
+      ShaderProgram( RHIDevice *device, char const *filename );
+      ~ShaderProgram();
 
       // feel free to add in more methods to help with the creation process if you want.
-      void create_input_layout( RHIDevice *device );
+      bool load_from_file( char const *filename );
+
+      // Releases all DX resources
+      void destroy();
 
       inline bool is_valid() const { return (dx_vertex_shader != nullptr) && (dx_fragment_shader != nullptr); }
 
+   private:
+      void create_input_layout();
+
    public:
+      RHIDevice *device;
+
       // All the steps to this (could be split out to a ShaderStage)
       ID3D11VertexShader *dx_vertex_shader;
       ID3D11PixelShader *dx_fragment_shader;
