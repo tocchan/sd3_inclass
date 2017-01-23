@@ -32,6 +32,7 @@ class RHIDevice;
 class RHIDeviceContext;
 class RHIOutput;
 
+class Image;
 
 /************************************************************************/
 /*                                                                      */
@@ -52,13 +53,13 @@ class Texture2D
    public:
       Texture2D( RHIDevice *device );
       Texture2D( RHIDevice *device, RHIOutput *output );
-      // Texture2D( RHIDevice *device, char const *filename );
-      // Texture2D( RHIDevice *device, Image const *image );
+      Texture2D( RHIDevice *device, char const *filename );
+      Texture2D( RHIDevice *device, Image const &image );
 
       ~Texture2D();
 
       // bool load_from_file( char const *filename );
-      // bool load_from_image( Image const *image );
+      bool load_from_image( Image const &image );
       void destroy();
 
       inline uint get_width() const { return width; }
@@ -74,11 +75,11 @@ class Texture2D
 
       ID3D11Texture2D *dx_resource;
       ID3D11RenderTargetView *dx_rtv;
-      // ID3D11ShaderResourceView *dx_srv;
+      /**/ ID3D11ShaderResourceView *dx_srv;
 
       uint width;
       uint height;
-      // uint dx_bind_flags; 
+      /**/ uint dx_bind_flags; 
 };
 
 /************************************************************************/

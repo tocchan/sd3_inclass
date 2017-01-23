@@ -216,10 +216,10 @@ void ShaderProgram::destroy()
 //------------------------------------------------------------------------
 void ShaderProgram::create_input_layout() 
 {
-   D3D11_INPUT_ELEMENT_DESC desc[1];
+   D3D11_INPUT_ELEMENT_DESC desc[2];
    memset( desc, 0, sizeof(desc) );
 
-   // 
+   // POSITION
    desc[0].SemanticName = "POSITION";
    desc[0].SemanticIndex = 0;
    desc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT; 
@@ -227,6 +227,16 @@ void ShaderProgram::create_input_layout()
    desc[0].AlignedByteOffset = offsetof( vertex_t, position );
    desc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA; 
    desc[0].InstanceDataStepRate = 0U;
+
+   // UV
+   desc[1].SemanticName = "UV";
+   desc[1].SemanticIndex = 0;
+   desc[1].Format = DXGI_FORMAT_R32G32_FLOAT; 
+   desc[1].InputSlot = 0U;
+   desc[1].AlignedByteOffset = offsetof( vertex_t, uv );
+   desc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA; 
+   desc[1].InstanceDataStepRate = 0U;
+
 
    device->dx_device->CreateInputLayout( desc, 
       ARRAYSIZE(desc), 

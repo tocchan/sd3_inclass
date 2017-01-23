@@ -57,6 +57,8 @@ class Image
       bool load_from_file( char const *filename );
       void destroy();
 
+      inline bool is_valid() const { return nullptr != buffer; }
+
       inline uint get_pixel_size() const { return bpp; }
       inline uint get_width() const { return width; }
       inline uint get_height() const { return height; }

@@ -49,6 +49,27 @@ struct vec3
       , z(_z)  {}
 };
 
+struct vec2 
+{
+   vec2( float v ) 
+      : x(v)
+      , y(v) 
+   {}
+
+   vec2() 
+      : vec2(0.0f)
+   {}
+
+   vec2( float _x, float _y )
+      : x(_x)
+      , y(_y) 
+   {}
+   
+
+   float x;
+   float y;
+};
+
 /************************************************************************/
 /*                                                                      */
 /* STRUCTS                                                              */
@@ -58,11 +79,13 @@ struct vertex_t
 {
    public:
       vec3 position;
+      vec2 uv; 
       
    public:
       vertex_t() {}
-      vertex_t( vec3 const &pos )
+      vertex_t( vec3 const &pos, vec2 const &tex = vec2(0.0f) )
          : position(pos)
+         , uv(tex)
       {}
 };
 

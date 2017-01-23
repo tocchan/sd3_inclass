@@ -7,6 +7,7 @@
 
 // A01
 #include "core/types.h"
+#include "core/image.h"
 #include "game/game_config.h"
 
 #include "render/rhi/rhiinstance.h"
@@ -118,6 +119,16 @@ void Game::start()
    init_rendering();
 
    renderer.rhi_output->window->set_custom_message_handler( GameMessageHandler );
+
+   // Test
+   Image image;
+   image.load_from_file( "image/testcube.jpg" );
+
+   // make sure this loaded in correclty
+   if (image.is_valid()) {
+      int x = 0;
+      x++;
+   }
 };
 
 //------------------------------------------------------------------------
@@ -166,7 +177,7 @@ void Game::render()
 
    renderer.set_shader( my_shader );
 
-   renderer.draw( PRIMITIVE_TRIANGLES, tri_vbo, 3 );
+   renderer.draw( PRIMITIVE_TRIANGLES, tri_vbo, 6 );
 
    renderer.present();
 }
@@ -184,13 +195,16 @@ void Game::init_rendering()
    my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_color.hlsl" );
 
    // Create vertices
-   vertex_t vertices[3] = {
-      vertex_t( vec3( -0.5f, -0.5f, 0.0f ) ), 
-      vertex_t( vec3(  0.0f,  0.5f, 0.0f ) ), 
-      vertex_t( vec3(  0.5f, -0.5f, 0.0f ) ),
+   vertex_t vertices[] = {
+      vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ), 
+      vertex_t( vec3( -1.0f,  1.0f, 0.0f ), vec2(0.0f, 0.0f) ),
+      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
+      vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ),
+      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
+      vertex_t( vec3(  1.0f, -1.0f, 0.0f ), vec2(1.0f, 1.0f) )
    };
    
-   tri_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 3 );
+   tri_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
 }
 
 //------------------------------------------------------------------------
