@@ -122,12 +122,8 @@ void RHIOutput::destroy_swap_chain()
 //------------------------------------------------------------------------
 bool RHIOutput::create_render_target()
 {
-   ID3D11Texture2D *back_buffer = nullptr;
-   swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&back_buffer);
-   render_target = new Texture2D( device, back_buffer );
-   DX_SAFE_RELEASE(back_buffer);
-
-   return true;
+   render_target = new Texture2D( device, this );
+   return render_target->is_valid();
 }
 
 

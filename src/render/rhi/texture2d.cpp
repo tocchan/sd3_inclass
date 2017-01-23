@@ -7,6 +7,7 @@
 
 #include "render/rhi/rhidevicecontext.h"
 #include "render/rhi/rhidevice.h"
+#include "render/rhi/rhioutput.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -66,25 +67,43 @@
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-// specialized for the output's texture
-Texture2D::Texture2D( RHIDevice *owner, ID3D11Texture2D *tex ) 
+Texture2D::Texture2D( RHIDevice *owner ) 
    : device(owner)
-   , dx_resource(tex)
+   , dx_resource(nullptr)
    , dx_rtv(nullptr)
+   // , dx_srv(nullptr)
+   , width(0)
+   , height(0)
+   // , dx_bind_flags(0U
+{}
+
+//------------------------------------------------------------------------
+// specialized for the output's texture
+Texture2D::Texture2D( RHIDevice *owner, RHIOutput *output ) 
+   : Texture2D( owner )
 {
-   if (tex != nullptr) {
-      tex->AddRef();
-      dx_resource = tex;
+   if (output != nullptr) {
+      ID3D11Texture2D *back_buffer = nullptr;
+      output->swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&back_buffer);
+      if (nullptr != back_buffer) {
+         dx_resource = back_buffer;
 
-      D3D11_TEXTURE2D_DESC desc;
-      tex->GetDesc(&desc);
+         // Get info about it.
+         D3D11_TEXTURE2D_DESC desc;
+         dx_resource->GetDesc(&desc);
 
-      width = desc.Width;
-      height = desc.Height;
+         width = desc.Width;
+         height = desc.Height;
+         // dx_bind_flags = desc.BindFlags
 
-      create_views();
+         create_views();
+      }
    }
 }
+
+//------------------------------------------------------------------------
+// Texture2D::Texture2D( RHIDevice *owner, char const *filename ) {}
+
 
 //------------------------------------------------------------------------
 Texture2D::~Texture2D()
