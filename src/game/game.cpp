@@ -62,6 +62,24 @@ Game* Game::sInstance = nullptr;
 /*                                                                      */
 /************************************************************************/
 
+//------------------------------------------------------------------------
+static bool GameMessageHandler( Window *wnd, UINT msg, WPARAM wparam, LPARAM lparam ) 
+{
+   UNREFERENCED(lparam);
+
+   switch (msg) {
+      case WM_KEYUP: 
+         if (wparam == VK_ESCAPE) {
+            wnd->close();
+         }
+
+         return false;
+
+      default:
+         return false;
+   }
+}
+
 /************************************************************************/
 /*                                                                      */
 /* EXTERNAL FUNCTIONS                                                   */
@@ -98,6 +116,8 @@ void Game::start()
 {
    quit_reason = QUITREASON_NONE;
    init_rendering();
+
+   renderer.rhi_output->window->set_custom_message_handler( GameMessageHandler );
 };
 
 //------------------------------------------------------------------------

@@ -143,7 +143,7 @@ void SimpleRenderer::process_messages()
 //------------------------------------------------------------------------
 bool SimpleRenderer::is_closed() const
 {
-   return rhi_output->window->is_closed();
+   return (rhi_output == nullptr) || rhi_output->window->is_closed();
 }
 
 //------------------------------------------------------------------------

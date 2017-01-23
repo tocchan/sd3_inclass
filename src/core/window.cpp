@@ -139,7 +139,14 @@ static LRESULT CALLBACK GameWndProc( HWND hwnd,
    LPARAM lparam )
 {
    Window *wnd = nullptr;
-   // wnd = (Window*) GetWindowLongPtr( hwnd, GWLP_USERDATA );
+   wnd = (Window*) GetWindowLongPtr( hwnd, GWLP_USERDATA );
+
+   if ((wnd != nullptr) && (wnd->custom_msgproc != nullptr)) {
+      bool supress = wnd->custom_msgproc( wnd, msg, wparam, lparam );
+      if (supress) {
+         return 1;
+      }
+   }
 
    switch (msg) {
       case WM_PAINT: {
@@ -373,6 +380,8 @@ Window::Window()
    , flags(0) 
 {
    WindowSystemAcquire();
+
+   custom_msgproc = nullptr;
 
    px_x = 200;
    px_y = 200;

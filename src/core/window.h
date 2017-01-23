@@ -47,6 +47,10 @@ enum eWindowFlag : uint
    WNDFLAG_LOCKED     = BIT_FLAG(3), // used internally to prevent updates during transitions
 };
 
+// returns true if we *take* this message (prevents windows from processing it)
+// otherweise false will cause wndproc to continue as normal
+class Window;
+typedef bool (*wnd_message_cb)( Window*, UINT, WPARAM, LPARAM );
 
 /************************************************************************/
 /*                                                                      */
@@ -80,6 +84,8 @@ class Window
 
       uint process_messages();
 
+      void set_custom_message_handler( wnd_message_cb cb ) { custom_msgproc = cb; }
+
       uint get_width() { return px_actual_width; }
       uint get_height() { return px_actual_height; }
 
@@ -95,6 +101,8 @@ class Window
    public:
       // Windows Specfic
       HWND hwnd;
+
+      wnd_message_cb custom_msgproc;
 
       int px_x;
       int px_y;
