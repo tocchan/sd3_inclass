@@ -340,6 +340,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\image.cpp" />
     <ClCompile Include="core\log.cpp" />
     <ClCompile Include="core\rgba.cpp" />
     <ClCompile Include="core\window.cpp" />
@@ -359,6 +360,8 @@
   <ItemGroup>
     <ClInclude Include="core\bit.h" />
     <ClInclude Include="core\endian.h" />
+    <ClInclude Include="core\external\stb_image.h" />
+    <ClInclude Include="core\image.h" />
     <ClInclude Include="core\log.h" />
     <ClInclude Include="core\rgba.h" />
     <ClInclude Include="core\types.h" />

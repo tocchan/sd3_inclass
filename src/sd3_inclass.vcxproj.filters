@@ -16,6 +16,7 @@
     <ClCompile Include="core\file.cpp" />
     <ClCompile Include="core\log.cpp" />
     <ClCompile Include="render\rhi\vertexbuffer.cpp" />
+    <ClCompile Include="core\image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -39,5 +40,7 @@
     <ClInclude Include="core\file.h" />
     <ClInclude Include="core\log.h" />
     <ClInclude Include="render\rhi\vertexbuffer.h" />
+    <ClInclude Include="core\external\stb_image.h" />
+    <ClInclude Include="core\image.h" />
   </ItemGroup>
 </Project>
