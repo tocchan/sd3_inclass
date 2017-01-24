@@ -188,7 +188,7 @@ void Game::init_rendering()
    renderer.setup( width, height );
 
    // my_shader = new ShaderProgram( renderer.rhi_device, "hlsl/imageeffect/nop.hlsl" );
-   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_textured.hlsl" );
+   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_grayscale.hlsl" );
 
    // Create vertices
    vertex_t vertices[] = {

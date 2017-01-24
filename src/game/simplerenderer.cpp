@@ -110,30 +110,20 @@ void SimpleRenderer::destroy()
 void SimpleRenderer::set_render_target( Texture2D *color_target )
 {
    if (color_target != nullptr) {
-      current_target = color_target; 
+      if (color_target->is_render_target()) {
+         current_target = color_target; 
+      } // else, WTH?
    } else {
       current_target = rhi_output->get_render_target();
    }
 
-   rhi_context->dx_context->OMSetRenderTargets(1,
-      &current_target->dx_rtv,
-      nullptr);
+   rhi_context->set_color_target( current_target );
 }
 
 //------------------------------------------------------------------------
 void SimpleRenderer::set_viewport( uint x, uint y, uint w, uint h ) 
 {
-   // Also, set which region of the screen we're rendering to, in this case, all of it 
-   D3D11_VIEWPORT viewport;
-   memset( &viewport, 0, sizeof(viewport) );
-   viewport.TopLeftX = (FLOAT)x;
-   viewport.TopLeftY = (FLOAT)y;
-   viewport.Width = (FLOAT)w;
-   viewport.Height = (FLOAT)h;
-   viewport.MinDepth = 0.0f;        // must be between 0 and 1 (defualt is 0);
-   viewport.MaxDepth = 1.0f;        // must be between 0 and 1 (default is 1)
-
-   rhi_context->dx_context->RSSetViewports(1, &viewport);
+   rhi_context->set_viewport( x, y, w, h );
 }
 
 //------------------------------------------------------------------------
@@ -169,23 +159,19 @@ void SimpleRenderer::present()
 //------------------------------------------------------------------------
 void SimpleRenderer::set_shader( ShaderProgram *program ) 
 {
-   rhi_context->dx_context->VSSetShader( program->dx_vertex_shader, nullptr, 0U );
-   rhi_context->dx_context->PSSetShader( program->dx_fragment_shader, nullptr, 0U );
-   rhi_context->dx_context->IASetInputLayout( program->dx_input_layout );
+   rhi_context->set_shader( program );
 }
 
 //------------------------------------------------------------------------
 void SimpleRenderer::set_texture2d( uint tex_index, Texture2D *tex ) 
 {
-   rhi_context->dx_context->VSSetShaderResources( tex_index, 1, &tex->dx_srv );
-   rhi_context->dx_context->PSSetShaderResources( tex_index, 1, &tex->dx_srv );
+   rhi_context->set_texture2d( tex_index, tex );
 }
 
 //------------------------------------------------------------------------
 void SimpleRenderer::set_sampler( uint samp_index, Sampler *samp ) 
 {
-   rhi_context->dx_context->VSSetSamplers( samp_index, 1, &samp->dx_sampler );
-   rhi_context->dx_context->PSSetSamplers( samp_index, 1, &samp->dx_sampler );
+   rhi_context->set_sampler( samp_index, samp );
 }
 
 //------------------------------------------------------------------------
@@ -193,19 +179,9 @@ void SimpleRenderer::draw( ePrimitiveType topology,
    VertexBuffer *vbo, 
    uint const vertex_count ) 
 {
-   D3D11_PRIMITIVE_TOPOLOGY d3d_prim;
-   switch (topology) {
-      case PRIMITIVE_TRIANGLES: 
-      default:
-         d3d_prim = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-   }
-
-   rhi_context->dx_context->IASetPrimitiveTopology( d3d_prim );
-   uint stride = sizeof(vertex_t);
-   uint offsets = 0;
-   rhi_context->dx_context->IASetVertexBuffers( 0, 1, &vbo->dx_buffer, &stride, &offsets );
-
-   rhi_context->dx_context->Draw( vertex_count, 0 );
+   rhi_context->set_topology( topology );
+   rhi_context->set_vertex_buffer( 0, vbo );
+   rhi_context->draw( vertex_count );
 }
 
 /************************************************************************/
