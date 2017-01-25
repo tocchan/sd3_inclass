@@ -173,7 +173,7 @@ void Game::render()
    renderer.set_texture2d( tex_sample );
    renderer.set_sampler( point_sampler );
 
-   renderer.draw( PRIMITIVE_TRIANGLES, tri_vbo, 6 );
+   renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
 
    renderer.present();
 }
@@ -193,24 +193,24 @@ void Game::init_rendering()
    // Create vertices
    vertex_t vertices[] = {
       vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ), 
+      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
       vertex_t( vec3( -1.0f,  1.0f, 0.0f ), vec2(0.0f, 0.0f) ),
-      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
       vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ),
+      vertex_t( vec3(  1.0f, -1.0f, 0.0f ), vec2(1.0f, 1.0f) ),
       vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
-      vertex_t( vec3(  1.0f, -1.0f, 0.0f ), vec2(1.0f, 1.0f) )
    };
    
-   tri_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
+   quad_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
 }
 
 //------------------------------------------------------------------------
 void Game::cleanup_rendering()
 {
    // delete vb
-   delete tri_vbo;
+   delete quad_vbo;
    delete tex_sample;
    delete point_sampler;
-   tri_vbo = nullptr;
+   quad_vbo = nullptr;
    tex_sample = nullptr;
    point_sampler = nullptr;
 

@@ -35,6 +35,7 @@ class RHIOutput;
 class Sampler;
 class ShaderProgram;
 class Texture2D;
+class RasterState;
 
 /************************************************************************/
 /*                                                                      */
@@ -64,6 +65,8 @@ class RHIDeviceContext
 
       void set_color_target( Texture2D *target );
       void set_viewport( uint x, uint y, uint w, uint h );
+
+      void set_raster_state( RasterState *rs );
 
       void set_shader( ShaderProgram *shader );
 

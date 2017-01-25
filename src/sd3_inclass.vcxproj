@@ -349,6 +349,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render\rhi\dx11.cpp" />
     <ClCompile Include="core\file.cpp" />
+    <ClCompile Include="render\rhi\rasterstate.cpp" />
     <ClCompile Include="render\rhi\rhidevice.cpp" />
     <ClCompile Include="render\rhi\rhidevicecontext.cpp" />
     <ClCompile Include="render\rhi\rhiinstance.cpp" />
@@ -373,6 +374,7 @@
     <ClInclude Include="game\simplerenderer.h" />
     <ClInclude Include="render\rhi\dx11.h" />
     <ClInclude Include="core\file.h" />
+    <ClInclude Include="render\rhi\rasterstate.h" />
     <ClInclude Include="render\rhi\rhidevice.h" />
     <ClInclude Include="render\rhi\rhidevicecontext.h" />
     <ClInclude Include="render\rhi\rhiinstance.h" />

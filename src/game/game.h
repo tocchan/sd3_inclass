@@ -98,7 +98,7 @@ class Game
       //------------------------------------------------------------------------
       SimpleRenderer renderer;
       ShaderProgram *my_shader;
-      VertexBuffer *tri_vbo;
+      VertexBuffer *quad_vbo;
 
       Texture2D *tex_sample;
       Sampler *point_sampler;

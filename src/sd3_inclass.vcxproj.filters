@@ -18,6 +18,7 @@
     <ClCompile Include="render\rhi\vertexbuffer.cpp" />
     <ClCompile Include="core\image.cpp" />
     <ClCompile Include="render\rhi\sampler.cpp" />
+    <ClCompile Include="render\rhi\rasterstate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -44,5 +45,6 @@
     <ClInclude Include="core\external\stb_image.h" />
     <ClInclude Include="core\image.h" />
     <ClInclude Include="render\rhi\sampler.h" />
+    <ClInclude Include="render\rhi\rasterstate.h" />
   </ItemGroup>
 </Project>

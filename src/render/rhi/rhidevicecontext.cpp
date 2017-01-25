@@ -9,6 +9,7 @@
 #include "render/rhi/rhiinstance.h"
 #include "render/rhi/rhioutput.h"
 
+#include "render/rhi/rasterstate.h"
 #include "render/rhi/sampler.h"
 #include "render/rhi/shaderprogram.h"
 #include "render/rhi/texture2d.h"
@@ -128,6 +129,12 @@ void RHIDeviceContext::set_viewport( uint x, uint y, uint w, uint h )
    viewport.MaxDepth = 1.0f;        // must be between 0 and 1 (default is 1)
 
    dx_context->RSSetViewports(1, &viewport);
+}
+
+//------------------------------------------------------------------------
+void RHIDeviceContext::set_raster_state( RasterState *rs ) 
+{
+   dx_context->RSSetState( rs->dx_state );
 }
 
 //------------------------------------------------------------------------
