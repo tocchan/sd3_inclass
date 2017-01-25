@@ -13,6 +13,7 @@
 #include "render/rhi/rhidevicecontext.h"
 #include "render/rhi/rhioutput.h"
 #include "render/rhi/rasterstate.h"
+#include "render/rhi/constantbuffer.h"
 #include "render/vertex.h"
 
 /************************************************************************/
@@ -113,6 +114,9 @@ class SimpleRenderer
       // [A02]
       void set_sampler( uint sampler_index, Sampler *sampler );
       inline void set_sampler( Sampler *sampler ) { set_sampler( 0, sampler ); }
+
+
+      void set_constant_buffer( uint idx, ConstantBuffer *cb );
 
       // [A02]
       // Indexed is optional - though highly encouraged to do 

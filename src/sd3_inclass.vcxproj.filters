@@ -19,6 +19,7 @@
     <ClCompile Include="core\image.cpp" />
     <ClCompile Include="render\rhi\sampler.cpp" />
     <ClCompile Include="render\rhi\rasterstate.cpp" />
+    <ClCompile Include="render\rhi\constantbuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -46,5 +47,6 @@
     <ClInclude Include="core\image.h" />
     <ClInclude Include="render\rhi\sampler.h" />
     <ClInclude Include="render\rhi\rasterstate.h" />
+    <ClInclude Include="render\rhi\constantbuffer.h" />
   </ItemGroup>
 </Project>

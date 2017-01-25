@@ -3,16 +3,10 @@
 /* INCLUDE                                                              */
 /*                                                                      */
 /************************************************************************/
-#include "game.h"
+#include "render/rhi/constantbuffer.h"
 
-// A01
-#include "core/types.h"
-#include "core/image.h"
-#include "game/game_config.h"
-
-#include "render/rhi/rhiinstance.h"
-#include "render/rhi/shaderprogram.h"
-#include "render/rhi/vertexbuffer.h"
+#include "render/rhi/rhidevice.h"
+#include "render/rhi/rhidevicecontext.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -55,7 +49,6 @@
 /* GLOBAL VARIABLES                                                     */
 /*                                                                      */
 /************************************************************************/
-Game* Game::sInstance = nullptr;
 
 /************************************************************************/
 /*                                                                      */
@@ -63,173 +56,61 @@ Game* Game::sInstance = nullptr;
 /*                                                                      */
 /************************************************************************/
 
-//------------------------------------------------------------------------
-static bool GameMessageHandler( Window *wnd, UINT msg, WPARAM wparam, LPARAM lparam ) 
-{
-   UNREFERENCED(lparam);
-
-   switch (msg) {
-      case WM_KEYUP: 
-         if (wparam == VK_ESCAPE) {
-            wnd->close();
-         }
-
-         return false;
-
-      default:
-         return false;
-   }
-}
-
-
 /************************************************************************/
 /*                                                                      */
 /* EXTERNAL FUNCTIONS                                                   */
 /*                                                                      */
 /************************************************************************/
-
 //------------------------------------------------------------------------
-Game::Game() 
-   : quit_reason(QUITREASON_NONE)
+ConstantBuffer::ConstantBuffer( RHIDevice *device, 
+   void const *buffer, 
+   size_t const size )
 {
-   current_state = nullptr;
+   buffer_size = size;
 
-   sInstance = this;
+   // First, describe the buffer
+   D3D11_BUFFER_DESC vb_desc;
+   memset( &vb_desc, 0, sizeof(vb_desc) );
+
+   vb_desc.ByteWidth = (uint)buffer_size;                      // How much data are we putting into this buffer
+   vb_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;       // What can we bind this data as (in this case, only vertex data)
+   vb_desc.Usage = D3D11_USAGE_DYNAMIC;                  // Hint on how this memory is used (in this case, it is immutable, or constant - can't be changed)
+                                                         // for limitations/strenghts of each, see;  
+                                                         //    https://msdn.microsoft.com/en-us/library/windows/desktop/ff476259(v=vs.85).aspx
+   vb_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+   vb_desc.StructureByteStride = 0;                      // How large is each element in this buffer
+
+   // Next, setup the initial data (required since this is an immutable buffer - so it must be instantiated at creation time)
+   D3D11_SUBRESOURCE_DATA initial_data;
+   memset( &initial_data, 0, sizeof(initial_data) );
+   initial_data.pSysMem = buffer;
+
+   // Finally create the vertex buffer
+   dx_buffer = nullptr;
+   device->dx_device->CreateBuffer( &vb_desc, &initial_data, &dx_buffer );
 }
 
 //------------------------------------------------------------------------
-Game::~Game()
+ConstantBuffer::~ConstantBuffer()
 {
-   sInstance = nullptr;
+   DX_SAFE_RELEASE(dx_buffer);
 }
 
 //------------------------------------------------------------------------
-void Game::run()
+bool ConstantBuffer::update( RHIDeviceContext *context, void const *buffer )
 {
-   start();
-   while (is_running()) {
-      run_frame();
+   D3D11_MAPPED_SUBRESOURCE resource;
+
+   ID3D11DeviceContext *dx_context = context->dx_context;
+   if (SUCCEEDED(dx_context->Map( dx_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0U, &resource ))) {
+      memcpy( resource.pData, buffer, buffer_size );
+      dx_context->Unmap( dx_buffer, 0 );
+
+      return true;
    }
-   end();
-}
 
-//------------------------------------------------------------------------
-void Game::start()
-{
-   quit_reason = QUITREASON_NONE;
-   init_rendering();
-
-   renderer.rhi_output->window->set_custom_message_handler( GameMessageHandler );
-
-   // Create Resources
-   tex_sample = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
-   point_sampler = new Sampler( renderer.rhi_device, FILTER_POINT, FILTER_POINT );
-
-   time.time = 0.0f;
-   time_constants = new ConstantBuffer( renderer.rhi_device, &time, sizeof(time) );
-};
-
-//------------------------------------------------------------------------
-void Game::run_frame()
-{
-   // Process Window Messages
-   renderer.process_messages();
-
-   float dt = 0.01f;
-   time.time += dt;
-   time_constants->update( renderer.rhi_context, &time );
-
-   // update sim
-   update_sim();
-
-   // render
-   render();
-}
-
-//------------------------------------------------------------------------
-void Game::end()
-{
-   cleanup_rendering();
-}
-
-//------------------------------------------------------------------------
-void Game::quit( eQuitReason reason /*= QUITREASON_USER*/ )
-{
-   if (!is_quitting()) {
-      quit_reason = reason;
-   }
-}
-
-//------------------------------------------------------------------------
-void Game::update_sim()
-{
-   if (renderer.is_closed()) {
-      quit();
-      return;
-   }
-}
-
-//------------------------------------------------------------------------
-void Game::render()
-{
-   renderer.set_render_target( nullptr );
-   renderer.clear_color( 0x9288ffff );
-
-   renderer.set_viewport( 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
-
-   renderer.set_shader( my_shader );
-   renderer.set_texture2d( tex_sample );
-   renderer.set_sampler( point_sampler );
-
-   renderer.set_constant_buffer( 1, time_constants );
-
-   renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
-
-   renderer.present();
-}
-
-//------------------------------------------------------------------------
-// Assignment 01
-void Game::init_rendering()
-{
-   uint width = DEFAULT_WINDOW_WIDTH;
-   uint height = DEFAULT_WINDOW_HEIGHT;
-
-   renderer.setup( width, height );
-
-   // my_shader = new ShaderProgram( renderer.rhi_device, "hlsl/imageeffect/nop.hlsl" );
-   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_grayscale.hlsl" );
-
-   // Create vertices
-   vertex_t vertices[] = {
-      vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ), 
-      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
-      vertex_t( vec3( -1.0f,  1.0f, 0.0f ), vec2(0.0f, 0.0f) ),
-      vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ),
-      vertex_t( vec3(  1.0f, -1.0f, 0.0f ), vec2(1.0f, 1.0f) ),
-      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
-   };
-   
-   quad_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
-}
-
-//------------------------------------------------------------------------
-void Game::cleanup_rendering()
-{
-   // delete vb
-   delete quad_vbo;
-   delete tex_sample;
-   delete point_sampler;
-   quad_vbo = nullptr;
-   tex_sample = nullptr;
-   point_sampler = nullptr;
-
-   // delete shader
-   delete my_shader;
-   my_shader = nullptr;
-
-   // cleanup renderer
-   renderer.destroy();
+   // ASSERT?
+   return false;
 }
 
 /************************************************************************/

@@ -1,23 +1,16 @@
 #pragma once
-#if !defined( __GAME__ )
-#define __GAME__
+#if !defined( __RHI_CONSTANT_BUFFER__ )
+#define __RHI_CONSTANT_BUFFER__
 
 /************************************************************************/
 /*                                                                      */
 /* INCLUDE                                                              */
 /*                                                                      */
 /************************************************************************/
-#include "core/types.h"
+#include "render/rhi/dx11.h"
 
-#include "render/rhi/rhidevice.h"
-#include "render/rhi/rhidevicecontext.h"
-#include "render/rhi/rhioutput.h"
-#include "game/game_config.h"
-#include "game/simplerenderer.h"
+#include "render/vertex.h"
 
-#include "render/rhi/sampler.h"
-#include "render/rhi/texture2d.h"
-#include "render/rhi/constantbuffer.h"
 
 /************************************************************************/
 /*                                                                      */
@@ -36,14 +29,8 @@
 /* TYPES                                                                */
 /*                                                                      */
 /************************************************************************/
-enum eQuitReason 
-{
-   QUITREASON_NONE,
-   QUITREASON_USER,
-};
-
-class Game;
-class GameState;
+class RHIDevice;
+class RHIDeviceContext;
 
 /************************************************************************/
 /*                                                                      */
@@ -51,86 +38,34 @@ class GameState;
 /*                                                                      */
 /************************************************************************/
 
-struct time_constant_t
-{
-   float time;
-
-   vec3 padding;
-};
 /************************************************************************/
 /*                                                                      */
 /* CLASSES                                                              */
 /*                                                                      */
 /************************************************************************/
-
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
-class Game
+class ConstantBuffer 
 {
    public:
-      //------------------------------------------------------------------------
-      Game();
-      ~Game();
+      ConstantBuffer( RHIDevice *owner, 
+         void const *buffer, 
+         size_t const buffer_size );
+      ~ConstantBuffer();
 
-      //------------------------------------------------------------------------
-      void run();
+      bool update( RHIDeviceContext *context, void const *buffer );
 
-      //------------------------------------------------------------------------
-      void start();
-      void run_frame();
-      void end();
-
-      //------------------------------------------------------------------------
-      void update_sim();
-      void render();
-
-      //------------------------------------------------------------------------
-      void quit( eQuitReason reason = QUITREASON_USER );
-
-      //------------------------------------------------------------------------
-      inline bool is_quitting() const { return quit_reason != QUITREASON_NONE; }
-      inline bool is_running() const { return !is_quitting(); }
+      inline bool is_valid() const { return (dx_buffer != nullptr); }
 
    public:
-      //------------------------------------------------------------------------
-      static Game* GetInstance() { return sInstance; }
-
-
-      
-   public:
-      //------------------------------------------------------------------------
-      void init_rendering();
-      void cleanup_rendering();
-
-      //------------------------------------------------------------------------
-      SimpleRenderer renderer;
-      ShaderProgram *my_shader;
-      VertexBuffer *quad_vbo;
-
-      Texture2D *tex_sample;
-      Sampler *point_sampler;
-
-      eQuitReason quit_reason;
-      GameState *current_state;
-
-      time_constant_t time;
-      ConstantBuffer *time_constants;
-
-      //------------------------------------------------------------------------
-      static Game *sInstance;
-
-
-
-
-};
-
+      ID3D11Buffer *dx_buffer;
+      size_t buffer_size;
+}; 
 
 /************************************************************************/
 /*                                                                      */
 /* GLOBAL VARIABLES                                                     */
 /*                                                                      */
 /************************************************************************/
-
 
 /************************************************************************/
 /*                                                                      */

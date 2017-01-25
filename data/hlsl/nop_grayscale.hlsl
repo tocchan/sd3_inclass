@@ -10,6 +10,15 @@ struct vertex_to_fragment_t
    float2 uv : UV;
 };
 
+// MAX SIZE: 4096 Elements (float4), 16 KB
+// ALIGNMENT:  must be aligned to 16B,
+cbuffer time_cb : register(b1) 
+{
+   float TIME;
+   
+   float3 PADDING;
+};
+
 
 Texture2D <float4> tTexture : register(t0);
 SamplerState sSampler : register(s0);
@@ -27,12 +36,21 @@ vertex_to_fragment_t VertexFunction( vertex_in_t vertex )
 // COLOR (PIXEL/FRAGMENT) FUNCTION
 float4 FragmentFunction( vertex_to_fragment_t data ) : SV_Target0
 {
+   // ?  Sample Color at Texture Coordinate data.uv
    float4 color = tTexture.Sample( sSampler, data.uv );
 
+   // ?
+   float t = frac(TIME); // returns decimal part of number
+
+   // ? Gets luminosity (grascale)
    float3 desaturate = float3(0.3, 0.59, 0.11);
    float g = dot( desaturate, color.xyz );
+   float4 grayscale = float4( g, g, g, 1 );
+
+   // ? Interpolates based on time
+   float4 final_color = lerp( color, grayscale, t );
    
-   return float4( g, g, g, 1 );
+   return final_color;
 }
 
 

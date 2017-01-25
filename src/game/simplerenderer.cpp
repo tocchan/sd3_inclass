@@ -180,6 +180,14 @@ void SimpleRenderer::set_sampler( uint samp_index, Sampler *samp )
 }
 
 //------------------------------------------------------------------------
+void SimpleRenderer::set_constant_buffer( uint idx, ConstantBuffer *cb )
+{
+   // rhi_context->set_constant_buffer( ... );
+   rhi_context->dx_context->VSSetConstantBuffers( idx, 1, &cb->dx_buffer );
+   rhi_context->dx_context->PSSetConstantBuffers( idx, 1, &cb->dx_buffer );
+}
+
+//------------------------------------------------------------------------
 void SimpleRenderer::draw( ePrimitiveType topology, 
    VertexBuffer *vbo, 
    uint const vertex_count ) 
