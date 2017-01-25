@@ -56,6 +56,7 @@
 
 #define XOR(a, b)  (!(a) != !(b))
 
+#define SAFE_DELETE(ptr)   if (nullptr != (ptr)) { delete ptr; ptr = nullptr; }
 
 /************************************************************************/
 /*                                                                      */

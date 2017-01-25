@@ -104,6 +104,8 @@ void SimpleRenderer::set_title( char const *new_title )
 //------------------------------------------------------------------------
 void SimpleRenderer::destroy() 
 {
+   SAFE_DELETE(default_raster_state);
+
    delete rhi_output;
    delete rhi_context;
    delete rhi_device;
