@@ -120,13 +120,6 @@ void Game::start()
    init_rendering();
 
    renderer.rhi_output->window->set_custom_message_handler( GameMessageHandler );
-
-   // Create Resources
-   tex_sample = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
-   point_sampler = new Sampler( renderer.rhi_device, FILTER_POINT, FILTER_POINT );
-
-   time.time = 0.0f;
-   time_constants = new ConstantBuffer( renderer.rhi_device, &time, sizeof(time) );
 };
 
 //------------------------------------------------------------------------
@@ -211,22 +204,27 @@ void Game::init_rendering()
    };
    
    quad_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
+
+   // Create Resources
+   point_sampler = new Sampler( renderer.rhi_device, FILTER_POINT, FILTER_POINT );
+   tex_sample = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
+
+   
+   time.time = 0.0f;
+   time_constants = new ConstantBuffer( renderer.rhi_device, &time, sizeof(time) );
 }
 
 //------------------------------------------------------------------------
 void Game::cleanup_rendering()
 {
    // delete vb
-   delete quad_vbo;
-   delete tex_sample;
-   delete point_sampler;
-   quad_vbo = nullptr;
-   tex_sample = nullptr;
-   point_sampler = nullptr;
+   SAFE_DELETE(quad_vbo);
 
-   // delete shader
-   delete my_shader;
-   my_shader = nullptr;
+   SAFE_DELETE(point_sampler);
+   SAFE_DELETE(tex_sample);
+   SAFE_DELETE(my_shader);
+   SAFE_DELETE(time_constants);
+
 
    // cleanup renderer
    renderer.destroy();

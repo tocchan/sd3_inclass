@@ -176,6 +176,7 @@ bool Texture2D::load_from_image( Image const &img )
 void Texture2D::destroy()
 {
    if (is_valid()) {
+      DX_SAFE_RELEASE(dx_srv);
       DX_SAFE_RELEASE(dx_rtv);
       DX_SAFE_RELEASE(dx_resource);
    }

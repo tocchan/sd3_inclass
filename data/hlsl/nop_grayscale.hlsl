@@ -40,7 +40,10 @@ float4 FragmentFunction( vertex_to_fragment_t data ) : SV_Target0
    float4 color = tTexture.Sample( sSampler, data.uv );
 
    // ?
-   float t = frac(TIME); // returns decimal part of number
+   float t = TIME; // frac(TIME); // returns decimal part of number
+   t = (sin(t * .5f) + 1) * .5f;
+
+   return float4(t, t, t, 1);
 
    // ? Gets luminosity (grascale)
    float3 desaturate = float3(0.3, 0.59, 0.11);
