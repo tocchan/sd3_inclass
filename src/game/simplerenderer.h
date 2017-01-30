@@ -118,6 +118,7 @@ class SimpleRenderer
       }
 
       void set_projection_matrix( mat44 const &proj );
+      void set_ortho_projection( vec2 const &bottom_left, vec2 const &top_right );
 
       // [A02] CLEARING 
       // Clears currently bound target

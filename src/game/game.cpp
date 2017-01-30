@@ -174,6 +174,7 @@ void Game::render()
    renderer.set_texture2d( tex_sample );
    renderer.set_sampler( point_sampler );
 
+   renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 1280.0f, 720.0f ) );
    renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
 
    renderer.present();

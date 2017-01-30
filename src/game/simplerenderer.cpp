@@ -162,8 +162,19 @@ bool SimpleRenderer::is_closed() const
 //------------------------------------------------------------------------
 void SimpleRenderer::set_projection_matrix( mat44 const &proj )
 {
-   matrix_data.projection = proj;
+   matrix_data.projection = proj.get_transpose();
    matrix_cb->update( rhi_context, &matrix_data );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_ortho_projection( vec2 const &bottom_left, vec2 const &top_right ) 
+{
+   mat44 proj = MatrixMakeOrthoProjection( bottom_left.x, 
+      top_right.x, 
+      bottom_left.y, 
+      top_right.y, 
+      0.0f, 1.0f );
+   set_projection_matrix( proj );
 }
 
 //------------------------------------------------------------------------
