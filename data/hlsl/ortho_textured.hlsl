@@ -10,13 +10,21 @@ struct vertex_to_fragment_t
    float2 uv : UV;
 };
 
+cbuffer matrix_cb : register(b0)
+{
+   float4x4 MODEL;
+   float4x4 VIEW;
+   float4x4 PROJECTION;
+};
+
 // MAX SIZE: 4096 Elements (float4), 16 KB
 // ALIGNMENT:  must be aligned to 16B,
 cbuffer time_cb : register(b1) 
 {
-   float TIME;
-   
-   float3 PADDING;
+   float GAME_TIME;
+   float SYSTEM_TIME;
+   float GAME_FRAME_TIME;
+   float SYSTEM_FRAME_TIME;
 };
 
 
@@ -33,15 +41,9 @@ vertex_to_fragment_t VertexFunction( vertex_in_t vertex )
 {
    vertex_to_fragment_t out_data = (vertex_to_fragment_t)0;
 
-   float width = 320;
-   float height = 180;
+   float4 transformed_position = mul( float4( vertex.position, 1.0f ), PROJECTION );
 
-   // float offset = (sin(TIME) + 1.0f) * 50.0f;
-
-   float transform_x = RangeMap( 0.0f, width, -1.0f, 1.0f, vertex.position.x );
-   float transform_y = RangeMap( 0.0f, height, -1.0f, 1.0f, vertex.position.y );
-
-   out_data.position = float4( float3( transform_x, transform_y, vertex.position.z ), 1.0f );
+   out_data.position = transformed_position;
    out_data.uv = vertex.uv;
    return out_data;
 }

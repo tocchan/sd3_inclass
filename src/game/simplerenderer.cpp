@@ -78,7 +78,10 @@ SimpleRenderer::SimpleRenderer()
    , rhi_context(nullptr)
    , rhi_output(nullptr)
    , current_target(nullptr) 
+   , matrix_cb(nullptr)
+   , time_cb(nullptr)
 {
+
 }
 
 //------------------------------------------------------------------------
@@ -93,6 +96,27 @@ void SimpleRenderer::setup( uint width, uint height )
 
    default_raster_state = new RasterState( rhi_device );
    rhi_context->set_raster_state( default_raster_state );
+
+   MemZero( &time_data );
+
+   matrix_cb = new ConstantBuffer( rhi_device, &matrix_data, sizeof(matrix_data) );
+   time_cb = new ConstantBuffer( rhi_device, &time_data, sizeof(time_data) );
+
+   // BIND constant buffers
+   set_constant_buffer( MATRIX_BUFFER_INDEX, matrix_cb );
+   set_constant_buffer( TIME_BUFFER_INDEX, time_cb );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::destroy() 
+{
+   SAFE_DELETE(default_raster_state);
+   SAFE_DELETE(matrix_cb);
+   SAFE_DELETE(time_cb);
+
+   delete rhi_output;
+   delete rhi_context;
+   delete rhi_device;
 }
 
 //------------------------------------------------------------------------
@@ -101,15 +125,7 @@ void SimpleRenderer::set_title( char const *new_title )
    rhi_output->window->set_title( new_title );
 }
 
-//------------------------------------------------------------------------
-void SimpleRenderer::destroy() 
-{
-   SAFE_DELETE(default_raster_state);
 
-   delete rhi_output;
-   delete rhi_context;
-   delete rhi_device;
-}
 
 //------------------------------------------------------------------------
 void SimpleRenderer::set_render_target( Texture2D *color_target )
@@ -141,6 +157,13 @@ void SimpleRenderer::process_messages()
 bool SimpleRenderer::is_closed() const
 {
    return (rhi_output == nullptr) || rhi_output->window->is_closed();
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_projection_matrix( mat44 const &proj )
+{
+   matrix_data.projection = proj;
+   matrix_cb->update( rhi_context, &matrix_data );
 }
 
 //------------------------------------------------------------------------

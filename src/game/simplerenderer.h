@@ -27,6 +27,12 @@
 /* MACROS                                                               */
 /*                                                                      */
 /************************************************************************/
+#define MATRIX_BUFFER_INDEX (0)
+#define TIME_BUFFER_INDEX (1)
+// 2 is going to be LIGHTING
+// 3 is going to be ANIMATION [AES]
+
+// 4 and on, User Defined;
 
 /************************************************************************/
 /*                                                                      */
@@ -39,6 +45,24 @@
 /* STRUCTS                                                              */
 /*                                                                      */
 /************************************************************************/
+struct matrix_buffer_t
+{
+   mat44 model;
+   mat44 view;
+   mat44 projection;
+};
+
+struct time_buffer_t 
+{
+   float game_time;
+   float system_time;
+   float game_frame_time;
+   float system_frame_time;
+};
+
+// LIGHTS
+// ANIMATION
+
 
 /************************************************************************/
 /*                                                                      */
@@ -93,6 +117,8 @@ class SimpleRenderer
          UNREFERENCED_PARAMETER(h);
       }
 
+      void set_projection_matrix( mat44 const &proj );
+
       // [A02] CLEARING 
       // Clears currently bound target
       void clear_color( rgba_fl const &color ); 
@@ -141,6 +167,12 @@ class SimpleRenderer
       Texture2D *current_target;
 
       RasterState *default_raster_state;
+
+      matrix_buffer_t matrix_data;
+      ConstantBuffer *matrix_cb;
+
+      time_buffer_t time_data;
+      ConstantBuffer *time_cb;
 };
 
 /************************************************************************/

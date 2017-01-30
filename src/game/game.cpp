@@ -174,8 +174,6 @@ void Game::render()
    renderer.set_texture2d( tex_sample );
    renderer.set_sampler( point_sampler );
 
-   renderer.set_constant_buffer( 1, time_constants );
-
    renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
 
    renderer.present();

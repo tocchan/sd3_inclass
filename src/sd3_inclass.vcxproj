@@ -359,6 +359,7 @@
     <ClCompile Include="render\rhi\shaderprogram.cpp" />
     <ClCompile Include="render\rhi\texture2d.cpp" />
     <ClCompile Include="render\rhi\vertexbuffer.cpp" />
+    <ClCompile Include="render\vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\bit.h" />

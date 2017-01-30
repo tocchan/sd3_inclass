@@ -20,6 +20,7 @@
     <ClCompile Include="render\rhi\sampler.cpp" />
     <ClCompile Include="render\rhi\rasterstate.cpp" />
     <ClCompile Include="render\rhi\constantbuffer.cpp" />
+    <ClCompile Include="render\vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
