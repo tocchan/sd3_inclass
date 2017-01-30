@@ -191,16 +191,16 @@ void Game::init_rendering()
    renderer.setup( width, height );
 
    // my_shader = new ShaderProgram( renderer.rhi_device, "hlsl/imageeffect/nop.hlsl" );
-   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/nop_grayscale.hlsl" );
+   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/ortho_textured.hlsl" );
 
    // Create vertices
    vertex_t vertices[] = {
-      vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ), 
-      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
-      vertex_t( vec3( -1.0f,  1.0f, 0.0f ), vec2(0.0f, 0.0f) ),
-      vertex_t( vec3( -1.0f, -1.0f, 0.0f ), vec2(0.0f, 1.0f) ),
-      vertex_t( vec3(  1.0f, -1.0f, 0.0f ), vec2(1.0f, 1.0f) ),
-      vertex_t( vec3(  1.0f,  1.0f, 0.0f ), vec2(1.0f, 0.0f) ),
+      vertex_t( vec3(  0.0f,    0.0f, 0.0f ),   vec2(0.0f, 1.0f) ), 
+      vertex_t( vec3(  100.0f,  100.0f, 0.0f ), vec2(1.0f, 0.0f) ),
+      vertex_t( vec3(  0.0f,    100.0f, 0.0f ), vec2(0.0f, 0.0f) ),
+      vertex_t( vec3(  0.0f,    0.0f, 0.0f ),   vec2(0.0f, 1.0f) ),
+      vertex_t( vec3(  100.0f,  0.0f, 0.0f ),   vec2(1.0f, 1.0f) ),
+      vertex_t( vec3(  100.0f,  100.0f, 0.0f ), vec2(1.0f, 0.0f) ),
    };
    
    quad_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
