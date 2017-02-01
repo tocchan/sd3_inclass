@@ -177,6 +177,8 @@ void Game::render()
    renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 1280.0f, 720.0f ) );
    renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
 
+   renderer.draw_quad2d( vec2( 100.0f, 100.0f), vec2( 740.0f, 460.0f ) );
+
    renderer.present();
 }
 

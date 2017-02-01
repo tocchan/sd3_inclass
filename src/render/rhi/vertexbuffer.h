@@ -30,6 +30,7 @@
 /*                                                                      */
 /************************************************************************/
 class RHIDevice;
+class RHIDeviceContext;
 
 /************************************************************************/
 /*                                                                      */
@@ -48,13 +49,19 @@ class VertexBuffer
    public:
       VertexBuffer( RHIDevice *owner, 
          vertex_t const *vertices, 
-         uint const vertex_count );
+         uint const vertex_count, 
+         eBufferUsage usage = BUFFERUSAGE_STATIC );
       ~VertexBuffer(); 
 
       inline bool is_valid() const { return (dx_buffer != nullptr); }
+      void update( RHIDeviceContext *context, vertex_t const* data, uint const count );
 
    public:
+      bool create( RHIDevice *device, vertex_t const *data, uint const count );
+
       ID3D11Buffer *dx_buffer;
+      uint buffer_size;
+      eBufferUsage usage;
 }; 
 
 /************************************************************************/

@@ -347,6 +347,7 @@
     <ClCompile Include="game\game.cpp" />
     <ClCompile Include="game\simplerenderer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="render\rhi\blendstate.cpp" />
     <ClCompile Include="render\rhi\constantbuffer.cpp" />
     <ClCompile Include="render\rhi\dx11.cpp" />
     <ClCompile Include="core\file.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="game\game.h" />
     <ClInclude Include="game\game_config.h" />
     <ClInclude Include="game\simplerenderer.h" />
+    <ClInclude Include="render\rhi\blendstate.h" />
     <ClInclude Include="render\rhi\constantbuffer.h" />
     <ClInclude Include="render\rhi\dx11.h" />
     <ClInclude Include="core\file.h" />

@@ -80,6 +80,7 @@ SimpleRenderer::SimpleRenderer()
    , current_target(nullptr) 
    , matrix_cb(nullptr)
    , time_cb(nullptr)
+   , temp_vbo(nullptr)
 {
 
 }
@@ -105,6 +106,8 @@ void SimpleRenderer::setup( uint width, uint height )
    // BIND constant buffers
    set_constant_buffer( MATRIX_BUFFER_INDEX, matrix_cb );
    set_constant_buffer( TIME_BUFFER_INDEX, time_cb );
+
+   temp_vbo = new VertexBuffer( rhi_device, nullptr, 32, BUFFERUSAGE_DYNAMIC );
 }
 
 //------------------------------------------------------------------------
@@ -113,6 +116,7 @@ void SimpleRenderer::destroy()
    SAFE_DELETE(default_raster_state);
    SAFE_DELETE(matrix_cb);
    SAFE_DELETE(time_cb);
+   SAFE_DELETE(temp_vbo);
 
    delete rhi_output;
    delete rhi_context;
@@ -229,6 +233,30 @@ void SimpleRenderer::draw( ePrimitiveType topology,
    rhi_context->set_topology( topology );
    rhi_context->set_vertex_buffer( 0, vbo );
    rhi_context->draw( vertex_count );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::draw_vertex_array( ePrimitiveType topology, 
+   vertex_t const *vertices,
+   uint const count )
+{
+   temp_vbo->update( rhi_context, vertices, count );
+   draw( topology, temp_vbo, count );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::draw_quad2d( vec2 const &bl, vec2 const &tr, rgba_fl const &color ) 
+{
+   vertex_t vertices[] = {
+      vertex_t( vec3( bl.x, bl.y, 0.0f ), vec2( 0.0f, 1.0f ), color ), 
+      vertex_t( vec3( tr.x, tr.y, 0.0f ), vec2( 1.0f, 0.0f ), color ), 
+      vertex_t( vec3( bl.x, tr.y, 0.0f ), vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( vec3( bl.x, bl.y, 0.0f ), vec2( 0.0f, 1.0f ), color ), 
+      vertex_t( vec3( tr.x, bl.y, 0.0f ), vec2( 1.0f, 1.0f ), color ), 
+      vertex_t( vec3( tr.x, tr.y, 0.0f ), vec2( 1.0f, 0.0f ), color ),
+   };
+
+   draw_vertex_array( PRIMITIVE_TRIANGLES, vertices, 6 );
 }
 
 /************************************************************************/

@@ -151,6 +151,9 @@ class SimpleRenderer
       // during this assignment as it is the easiest assignment to 
       // implement them with
       void draw( ePrimitiveType topology, VertexBuffer *vbo, uint const vertex_count );
+      void draw_vertex_array( ePrimitiveType topology, vertex_t const *vbo, uint const vertex_count );
+
+      void draw_quad2d( vec2 const &lower_left, vec2 const &top_right, rgba_fl const &color = rgba_fl::WHITE );
 
       void draw_indexed( ePrimitiveType topology, VertexBuffer *vbo, IndexBuffer *ibo, uint const vertex_count ) 
       {
@@ -174,6 +177,8 @@ class SimpleRenderer
 
       time_buffer_t time_data;
       ConstantBuffer *time_cb;
+
+      VertexBuffer *temp_vbo;
 };
 
 /************************************************************************/
