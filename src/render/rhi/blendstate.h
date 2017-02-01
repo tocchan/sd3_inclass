@@ -31,11 +31,16 @@
 class RHIDevice;
 
 // SIMPLE WAY
-enum eBlendMode
+enum eBlendFactor
 {
-   BLEND_NONE,
-   BLEND_ALPHA,
-   BLEND_ADDITIVE,
+   BLEND_ONE,
+   BLEND_ZERO,
+
+   BLEND_SRC_ALPHA,
+   BLEND_INV_SRC_ALPHA,
+
+   BLEND_SRC_COLOR,
+   BLEND_DEST_COLOR,
 };
 
 /************************************************************************/
@@ -52,7 +57,7 @@ enum eBlendMode
 class BlendState 
 {
    public:
-      BlendState( RHIDevice *owner, eBlendMode const mode ); 
+      BlendState( RHIDevice *owner, eBlendFactor const src_factor, eBlendFactor dest_factor ); 
       ~BlendState();
       
       inline bool is_valid() const { return (nullptr != dx_state); }
