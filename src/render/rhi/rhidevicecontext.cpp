@@ -9,6 +9,7 @@
 #include "render/rhi/rhiinstance.h"
 #include "render/rhi/rhioutput.h"
 
+#include "render/rhi/blendstate.h"
 #include "render/rhi/rasterstate.h"
 #include "render/rhi/sampler.h"
 #include "render/rhi/shaderprogram.h"
@@ -135,6 +136,15 @@ void RHIDeviceContext::set_viewport( uint x, uint y, uint w, uint h )
 void RHIDeviceContext::set_raster_state( RasterState *rs ) 
 {
    dx_context->RSSetState( rs->dx_state );
+}
+
+//------------------------------------------------------------------------
+void RHIDeviceContext::set_blend_state( BlendState *bs ) 
+{
+   float constant[] = { 1, 1, 1, 1 };
+   dx_context->OMSetBlendState( bs->dx_state, 
+      constant, 
+      0xffffffff );
 }
 
 //------------------------------------------------------------------------

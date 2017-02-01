@@ -12,6 +12,7 @@
 #include "render/rhi/rhidevice.h"
 #include "render/rhi/rhidevicecontext.h"
 #include "render/rhi/rhioutput.h"
+#include "render/rhi/blendstate.h"
 #include "render/rhi/rasterstate.h"
 #include "render/rhi/constantbuffer.h"
 #include "render/vertex.h"
@@ -58,6 +59,13 @@ struct time_buffer_t
    float system_time;
    float game_frame_time;
    float system_frame_time;
+};
+
+struct blend_state_t
+{
+   bool enabled;
+   eBlendFactor src_factor;
+   eBlendFactor dst_factor;
 };
 
 // LIGHTS
@@ -120,6 +128,9 @@ class SimpleRenderer
       void set_projection_matrix( mat44 const &proj );
       void set_ortho_projection( vec2 const &bottom_left, vec2 const &top_right );
 
+      void enable_blend( eBlendFactor src, eBlendFactor dest );
+      void disable_blend();
+
       // [A02] CLEARING 
       // Clears currently bound target
       void clear_color( rgba_fl const &color ); 
@@ -171,6 +182,9 @@ class SimpleRenderer
       Texture2D *current_target;
 
       RasterState *default_raster_state;
+
+      blend_state_t blend_state;
+      BlendState *current_blend_state;
 
       matrix_buffer_t matrix_data;
       ConstantBuffer *matrix_cb;

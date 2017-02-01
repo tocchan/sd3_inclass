@@ -76,7 +76,10 @@ static D3D11_BLEND ToDXFactor( eBlendFactor const factor )
 }
 
 //------------------------------------------------------------------------
-BlendState::BlendState( RHIDevice *owner, eBlendFactor src_factor, eBlendFactor dest_factor )
+BlendState::BlendState( RHIDevice *owner, 
+   bool enabled, 
+   eBlendFactor const src_factor, 
+   eBlendFactor const dest_factor )
    : device(owner)
    , dx_state(nullptr)
 {
@@ -86,7 +89,7 @@ BlendState::BlendState( RHIDevice *owner, eBlendFactor src_factor, eBlendFactor 
    desc.AlphaToCoverageEnable = false;  // multisampling - not used in class
    desc.IndependentBlendEnable = false; // multiple render targest - do we have different blend state per?
 
-   desc.RenderTarget[0].BlendEnable = false;
+   desc.RenderTarget[0].BlendEnable = enabled;
 
    // Color Blending
    desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;

@@ -57,7 +57,9 @@ enum eBlendFactor
 class BlendState 
 {
    public:
-      BlendState( RHIDevice *owner, eBlendFactor const src_factor, eBlendFactor dest_factor ); 
+      BlendState( RHIDevice *owner, bool enabled, 
+         eBlendFactor const src_factor = BLEND_ONE, 
+         eBlendFactor const dest_factor = BLEND_ZERO ); 
       ~BlendState();
       
       inline bool is_valid() const { return (nullptr != dx_state); }

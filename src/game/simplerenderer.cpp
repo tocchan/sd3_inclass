@@ -81,6 +81,7 @@ SimpleRenderer::SimpleRenderer()
    , matrix_cb(nullptr)
    , time_cb(nullptr)
    , temp_vbo(nullptr)
+   , current_blend_state(nullptr)
 {
 
 }
@@ -179,6 +180,46 @@ void SimpleRenderer::set_ortho_projection( vec2 const &bottom_left, vec2 const &
       top_right.y, 
       0.0f, 1.0f );
    set_projection_matrix( proj );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::enable_blend( eBlendFactor src, eBlendFactor dest )
+{
+   if (current_blend_state != nullptr) {
+      if ( (blend_state.enabled == true)
+         && (blend_state.src_factor == src)
+         && (blend_state.dst_factor == dest) ) 
+      {
+         return;
+      }
+   }
+
+   SAFE_DELETE( current_blend_state );
+
+   BlendState *bs = new BlendState( rhi_device, true, src, dest );
+   rhi_context->set_blend_state( bs );
+
+   blend_state.enabled = true;
+   blend_state.src_factor = src;
+   blend_state.dst_factor = dest;
+
+   current_blend_state = bs;
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::disable_blend()
+{
+   if (!blend_state.enabled) {
+      return;
+   }
+
+   SAFE_DELETE( current_blend_state );
+   BlendState *bs = new BlendState( rhi_device, false );
+   rhi_context->set_blend_state( bs );
+
+   blend_state.enabled = false;
+
+   current_blend_state = bs;
 }
 
 //------------------------------------------------------------------------

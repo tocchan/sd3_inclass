@@ -36,6 +36,7 @@ class Sampler;
 class ShaderProgram;
 class Texture2D;
 class RasterState;
+class BlendState;
 
 /************************************************************************/
 /*                                                                      */
@@ -67,6 +68,7 @@ class RHIDeviceContext
       void set_viewport( uint x, uint y, uint w, uint h );
 
       void set_raster_state( RasterState *rs );
+      void set_blend_state( BlendState *bs );
 
       void set_shader( ShaderProgram *shader );
 
