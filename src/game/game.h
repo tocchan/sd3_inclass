@@ -108,6 +108,7 @@ class Game
       VertexBuffer *quad_vbo;
 
       Texture2D *tex_sample;
+      Texture2D *tex_particle;
       Sampler *point_sampler;
 
       eQuitReason quit_reason;

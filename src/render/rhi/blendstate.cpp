@@ -68,6 +68,12 @@ static D3D11_BLEND ToDXFactor( eBlendFactor const factor )
 
       case BLEND_ZERO:
          return D3D11_BLEND_ZERO;
+         
+      case BLEND_SRC_ALPHA:
+         return D3D11_BLEND_SRC_ALPHA;
+
+      case BLEND_INV_SRC_ALPHA:
+         return D3D11_BLEND_INV_SRC_ALPHA;
 
       default:
          // ASSERT_OR_DIE(false, "Undefined type.");

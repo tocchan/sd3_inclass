@@ -114,6 +114,7 @@ void SimpleRenderer::setup( uint width, uint height )
 //------------------------------------------------------------------------
 void SimpleRenderer::destroy() 
 {
+   SAFE_DELETE(current_blend_state);
    SAFE_DELETE(default_raster_state);
    SAFE_DELETE(matrix_cb);
    SAFE_DELETE(time_cb);

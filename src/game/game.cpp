@@ -174,11 +174,12 @@ void Game::render()
    renderer.set_texture2d( tex_sample );
    renderer.set_sampler( point_sampler );
 
-   renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 1280.0f, 720.0f ) );
+   renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 100.0f, 100.0f ) );
    renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
 
-   renderer.enable_blend( BLEND_ONE, BLEND_ONE );
-   renderer.draw_quad2d( vec2( 50.0f, 50.0f), vec2( 740.0f, 460.0f ) );
+   renderer.set_texture2d( tex_particle );
+   renderer.enable_blend( BLEND_SRC_ALPHA, BLEND_INV_SRC_ALPHA );
+   renderer.draw_quad2d( vec2( 50.0f, 50.0f), vec2( 100.0f, 100.0f ) );
    renderer.disable_blend();
 
    renderer.present();
@@ -211,7 +212,7 @@ void Game::init_rendering()
    // Create Resources
    point_sampler = new Sampler( renderer.rhi_device, FILTER_POINT, FILTER_POINT );
    tex_sample = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
-
+   tex_particle = new Texture2D( renderer.rhi_device, "font/arial64_0.png" );
    
    time.time = 0.0f;
    time_constants = new ConstantBuffer( renderer.rhi_device, &time, sizeof(time) );
@@ -224,10 +225,10 @@ void Game::cleanup_rendering()
    SAFE_DELETE(quad_vbo);
 
    SAFE_DELETE(point_sampler);
+   SAFE_DELETE(tex_particle);
    SAFE_DELETE(tex_sample);
    SAFE_DELETE(my_shader);
    SAFE_DELETE(time_constants);
-
 
    // cleanup renderer
    renderer.destroy();
