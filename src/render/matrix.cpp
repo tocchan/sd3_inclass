@@ -67,7 +67,7 @@ mat44 MatrixMakePerspectiveProjection( float const fov_radians,
    mat.i = vec4( w,     0.0f,    0.0f,          0.0f );
    mat.j = vec4( 0.0f,  h,       0.0f,          0.0f );
    mat.k = vec4( 0.0f,  0.0f,    fz * q,        1.0f );
-   mat.t = vec4( 0.0f,  0.0f,    -nz * fz * q,  1.0f );
+   mat.t = vec4( 0.0f,  0.0f,    -nz * fz * q,  0.0f );
    
    return mat;
 }
