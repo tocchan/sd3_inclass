@@ -29,6 +29,7 @@
 enum eImageFormat : uint
 {
    IMAGEFORMAT_RGBA8, // only supporting this one for class - up to you if you want to support more
+   IMAGEFORMAT_D24S8,
 };
 
 /************************************************************************/

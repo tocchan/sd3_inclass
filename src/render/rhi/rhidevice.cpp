@@ -111,6 +111,20 @@ VertexBuffer* RHIDevice::create_vertex_buffer( vertex_t *vertices, uint vertex_c
    return buffer;
 }
 
+//------------------------------------------------------------------------
+Texture2D* RHIDevice::create_render_target( uint width, uint height )
+{
+   Texture2D *tex = new Texture2D( this, width, height, IMAGEFORMAT_RGBA8 );
+   return tex;
+}
+
+//------------------------------------------------------------------------
+Texture2D* RHIDevice::create_depth_target( uint width, uint height )
+{
+   Texture2D *tex = new Texture2D( this, width, height, IMAGEFORMAT_D24S8 );
+   return tex;
+}
+
 
 /************************************************************************/
 /*                                                                      */

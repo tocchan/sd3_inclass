@@ -8,6 +8,7 @@
 /*                                                                      */
 /************************************************************************/
 #include "core/types.h"
+#include "core/image.h"
 
 #include "render/rhi/dx11.h"
 
@@ -32,8 +33,6 @@ class RHIDevice;
 class RHIDeviceContext;
 class RHIOutput;
 
-class Image;
-
 /************************************************************************/
 /*                                                                      */
 /* STRUCTS                                                              */
@@ -56,6 +55,8 @@ class Texture2D
       Texture2D( RHIDevice *device, char const *filename );
       Texture2D( RHIDevice *device, Image const &image );
 
+      Texture2D( RHIDevice *device, uint width, uint height, eImageFormat format );
+
       ~Texture2D();
 
       // bool load_from_file( char const *filename );
@@ -75,11 +76,12 @@ class Texture2D
 
       ID3D11Texture2D *dx_resource;
       ID3D11RenderTargetView *dx_rtv;
-      /**/ ID3D11ShaderResourceView *dx_srv;
+      ID3D11ShaderResourceView *dx_srv;
+      ID3D11DepthStencilView *dx_dsv;
 
       uint width;
       uint height;
-      /**/ uint dx_bind_flags; 
+      uint dx_bind_flags; 
 };
 
 /************************************************************************/

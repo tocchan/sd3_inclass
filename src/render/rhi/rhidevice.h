@@ -69,6 +69,9 @@ class RHIDevice
       ShaderProgram* create_shader_from_hlsl_file( char const *filename );
 
       VertexBuffer* create_vertex_buffer( vertex_t *vertices, uint vertex_count );
+
+      Texture2D* create_render_target( uint width, uint height );
+      Texture2D* create_depth_target( uint width, uint height );
       
    public:
       ID3D11Device *dx_device;

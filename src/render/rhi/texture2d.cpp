@@ -123,6 +123,61 @@ Texture2D::Texture2D( RHIDevice *owner, char const *filename )
    load_from_image( image );
 }
 
+//------------------------------------------------------------------------
+Texture2D::Texture2D( RHIDevice *owner, uint w, uint h, eImageFormat format )
+   : Texture2D(owner)
+{
+   // default usage - this is going to be written to by the GPU
+   D3D11_USAGE usage = D3D11_USAGE_DEFAULT;
+   width = w;
+   height = h;
+
+   DXGI_FORMAT dx_format;
+   uint dx_bindings = 0U;
+   switch (format) {
+      case IMAGEFORMAT_RGBA8: 
+         dx_format = DXGI_FORMAT_R8G8B8A8_UNORM;
+         dx_bindings = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+         break;
+      case IMAGEFORMAT_D24S8:
+         // depth textures are 24-bit depth, 8-bit stencil
+         dx_format = DXGI_FORMAT_D24_UNORM_S8_UINT; 
+         dx_bindings = D3D11_BIND_DEPTH_STENCIL; // binding this to as a shader resource requires a couple extra steps - saved for later
+         break;
+      default:
+         // ASSERTORDIE
+         return;
+   };
+
+   D3D11_TEXTURE2D_DESC tex_desc;
+   memset( &tex_desc, 0, sizeof(tex_desc) );
+
+   tex_desc.Width = width;
+   tex_desc.Height = height;
+   tex_desc.MipLevels = 1;                // no mip mapping
+   tex_desc.ArraySize = 1;                // NO ARRAYS!  
+   tex_desc.Usage = usage;
+   tex_desc.Format = dx_format; 
+   tex_desc.BindFlags = dx_bindings;
+   tex_desc.CPUAccessFlags = 0U;
+   tex_desc.MiscFlags = 0U; // there is one for generating mip maps.
+
+   // multisampling options
+   tex_desc.SampleDesc.Count = 1;
+   tex_desc.SampleDesc.Quality = 0;
+
+   // no initial data - we're creating renderable targets
+
+   ID3D11Device *dx_device = device->dx_device;
+   HRESULT hr = dx_device->CreateTexture2D( &tex_desc, nullptr, &dx_resource );
+
+   if (SUCCEEDED(hr)) {
+      dx_bind_flags = dx_bindings;
+      create_views();
+   }
+}
+
+
 
 //------------------------------------------------------------------------
 Texture2D::~Texture2D()
@@ -178,6 +233,7 @@ void Texture2D::destroy()
    if (is_valid()) {
       DX_SAFE_RELEASE(dx_srv);
       DX_SAFE_RELEASE(dx_rtv);
+      DX_SAFE_RELEASE(dx_dsv);
       DX_SAFE_RELEASE(dx_resource);
    }
 }
@@ -193,6 +249,10 @@ void Texture2D::create_views()
 
    if (dx_bind_flags & D3D11_BIND_SHADER_RESOURCE) {
       dd->CreateShaderResourceView( dx_resource, nullptr, &dx_srv );
+   }
+
+   if (dx_bind_flags & D3D11_BIND_DEPTH_STENCIL) {
+      dd->CreateDepthStencilView( dx_resource, nullptr, &dx_dsv );
    }
 }
 
