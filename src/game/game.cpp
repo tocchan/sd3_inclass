@@ -185,11 +185,14 @@ void Game::render()
    */
 
    float aspect_ratio = 1280.0f / 720.0f;
+   aspect_ratio; 
+
+   // renderer.set_projection_matrix( mat44::IDENTITY );
    // renderer.set_ortho_projection( vec2(aspect_ratio * -5.0f, -5.0f), vec2(aspect_ratio * 5.0f, 5.0f) );
    renderer.set_perspective_projection( D2R(60.0f), aspect_ratio, 0.1f, 10.0f );
 
    renderer.set_texture2d( tex_sample );
-   renderer.draw_quad3d( vec3(0.0f, 0.0f, 3.0f), 
+   renderer.draw_quad3d( vec3(0.0f, 0.0f, 1.0f), 
       vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
       vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
 

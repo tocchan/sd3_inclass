@@ -77,7 +77,7 @@ static RHIInstance *gRenderInstance = nullptr;
 //------------------------------------------------------------------------
 STATIC RHIInstance* RHIInstance::GetInstance()
 {
-   if (gRenderInstance != nullptr) {
+   if (gRenderInstance == nullptr) {
       // will create the me variable.
       new RHIInstance();
    }
@@ -94,8 +94,13 @@ RHIInstance::RHIInstance()
    debug = nullptr; // IDXGIDebug
    debug_module = nullptr; // HMODULE
    #if defined(_DEBUG)
-      debug_module = ::LoadLibraryA( "Dxgidebug.dll" );
-      typedef HRESULT (*GetDebugModuleCB)( REFIID, void** );
+      #if defined(_X64)
+         debug_module = ::LoadLibrary( "dxgidebug.dll" );
+      #else 
+         debug_module = LoadLibraryEx( "dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32 );
+      #endif
+
+      typedef HRESULT (WINAPI *GetDebugModuleCB)( REFIID, void** );
       GetDebugModuleCB cb = (GetDebugModuleCB) ::GetProcAddress( debug_module, "DXGIGetDebugInterface" );
       cb( __uuidof(IDXGIDebug), (void**)&debug );
 
