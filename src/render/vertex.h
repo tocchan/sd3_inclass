@@ -22,6 +22,8 @@
 /* MACROS                                                               */
 /*                                                                      */
 /************************************************************************/
+float constexpr PI = (3.1415926535897932384626f);
+#define D2R(deg) ((deg) * (PI / 180.0f))
 
 /************************************************************************/
 /*                                                                      */
@@ -48,7 +50,20 @@ struct vec3
       : x(_x)
       , y(_y)
       , z(_z)  {}
+
+
+   
 };
+
+inline vec3 operator+( vec3 const &a, vec3 const &b ) 
+{
+   return vec3( a.x + b.x, a.y + b.y, a.z + b.z );
+}
+
+inline vec3 operator*( float const c, vec3 const &v )
+{
+   return vec3( c * v.x, c * v.y, c * v.z );
+}
 
 struct vec2 
 {
@@ -167,5 +182,10 @@ struct vertex_t
 mat44 MatrixMakeOrthoProjection( float nx, float fx, 
    float ny, float fy,
    float nz = 0.0f, float fz = 1.0f );
+
+mat44 MatrixMakePerspectiveProjection( float const fov_radians, 
+   float const aspect_ratio, 
+   float const nz,
+   float const fz );
 
 #endif 

@@ -5,6 +5,8 @@
 /************************************************************************/
 #include "render/vertex.h"
 
+#include <math.h>
+
 /************************************************************************/
 /*                                                                      */
 /* DEFINES AND CONSTANTS                                                */
@@ -23,7 +25,7 @@ STATIC mat44 const mat44::IDENTITY = mat44();
 /* TYPES                                                                */
 /*                                                                      */
 /************************************************************************/
-
+//------------------------------------------------------------------------
 mat44 MatrixMakeOrthoProjection( float nx, float fx, 
    float ny, float fy,
    float nz /*= 0.0f*/, float fz /*= 1.0f*/ )
@@ -39,6 +41,34 @@ mat44 MatrixMakeOrthoProjection( float nx, float fx,
    mat.k = vec4( 0.0f, 0.0f, sz, 0.0f );
    mat.t = vec4( -(fx + nx) * sx, -(fy + ny) * sy, -nz * sz, 1.0f );
 
+   return mat;
+}
+
+//------------------------------------------------------------------------
+mat44 MatrixMakePerspectiveProjection( float const fov_radians, 
+   float const aspect_ratio, 
+   float const nz,
+   float const fz )
+{
+   float size = 1.0f / tanf(fov_radians / 2.0f);
+
+   // scale X or Y depending which dimension is bigger
+   float w = size;
+   float h = size;
+   if (aspect_ratio > 1.0f) {
+      w /= aspect_ratio;
+   } else {
+      h *= aspect_ratio;
+   }
+
+   float q = 1.0f / (fz - nz);
+
+   mat44 mat;
+   mat.i = vec4( w,     0.0f,    0.0f,          0.0f );
+   mat.j = vec4( 0.0f,  h,       0.0f,          0.0f );
+   mat.k = vec4( 0.0f,  0.0f,    fz * q,        1.0f );
+   mat.t = vec4( 0.0f,  0.0f,    -nz * fz * q,  1.0f );
+   
    return mat;
 }
 

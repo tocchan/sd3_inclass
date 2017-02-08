@@ -174,6 +174,7 @@ void Game::render()
    renderer.set_texture2d( tex_sample );
    renderer.set_sampler( point_sampler );
 
+   /*
    renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 100.0f, 100.0f ) );
    renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
 
@@ -181,6 +182,17 @@ void Game::render()
    renderer.enable_blend( BLEND_SRC_ALPHA, BLEND_INV_SRC_ALPHA );
    renderer.draw_quad2d( vec2( 50.0f, 50.0f), vec2( 100.0f, 100.0f ) );
    renderer.disable_blend();
+   */
+
+   float aspect_ratio = 1280.0f / 720.0f;
+   // renderer.set_ortho_projection( vec2(aspect_ratio * -5.0f, -5.0f), vec2(aspect_ratio * 5.0f, 5.0f) );
+   renderer.set_perspective_projection( D2R(60.0f), aspect_ratio, 0.1f, 10.0f );
+
+   renderer.set_texture2d( tex_sample );
+   renderer.draw_quad3d( vec3(0.0f, 0.0f, 3.0f), 
+      vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
+      vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
+
 
    renderer.present();
 }

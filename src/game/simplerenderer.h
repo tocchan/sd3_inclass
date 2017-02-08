@@ -127,6 +127,7 @@ class SimpleRenderer
 
       void set_projection_matrix( mat44 const &proj );
       void set_ortho_projection( vec2 const &bottom_left, vec2 const &top_right );
+      void set_perspective_projection( float const fov_radians, float aspect_ratio, float const nz, float const fz );
 
       void enable_blend( eBlendFactor src, eBlendFactor dest );
       void disable_blend();
@@ -164,7 +165,14 @@ class SimpleRenderer
       void draw( ePrimitiveType topology, VertexBuffer *vbo, uint const vertex_count );
       void draw_vertex_array( ePrimitiveType topology, vertex_t const *vbo, uint const vertex_count );
 
-      void draw_quad2d( vec2 const &lower_left, vec2 const &top_right, rgba_fl const &color = rgba_fl::WHITE );
+      void draw_quad2d( vec2 const &lower_left, 
+         vec2 const &top_right, 
+         rgba_fl const &color = rgba_fl::WHITE );
+
+      void SimpleRenderer::draw_quad3d( vec3 const &origin, 
+         vec3 const &right, float neg_x_extents, float pos_x_extents, 
+         vec3 const &up, float neg_y_extents, float pos_y_extents, 
+         rgba_fl const &color = rgba_fl::WHITE );
 
       void draw_indexed( ePrimitiveType topology, VertexBuffer *vbo, IndexBuffer *ibo, uint const vertex_count ) 
       {

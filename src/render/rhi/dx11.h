@@ -10,8 +10,8 @@
 #include "core/types.h"
 #include "render/rhi/types.h"
 
+#define INITGUID
 #include <d3d11.h>
-// #include <d3d10.h>
 #include <DXGI.h>
 
 // DEBUG STUFF
@@ -19,7 +19,6 @@
 // #pragma comment( lib, "dxguid.lib" )
 
 #pragma comment( lib, "d3d11.lib" )
-// #pragma comment( lib, "d3d10.lib" )
 #pragma comment( lib, "DXGI.lib" )
 
 // For Shader Compilation

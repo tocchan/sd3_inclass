@@ -184,6 +184,20 @@ void SimpleRenderer::set_ortho_projection( vec2 const &bottom_left, vec2 const &
 }
 
 //------------------------------------------------------------------------
+void SimpleRenderer::set_perspective_projection( float const fov_radians, 
+   float aspect_ratio, 
+   float const nz, 
+   float const fz )
+{
+   mat44 proj = MatrixMakePerspectiveProjection( fov_radians, 
+      aspect_ratio, 
+      nz, 
+      fz );
+   set_projection_matrix( proj );
+}
+
+
+//------------------------------------------------------------------------
 void SimpleRenderer::enable_blend( eBlendFactor src, eBlendFactor dest )
 {
    if (current_blend_state != nullptr) {
@@ -296,6 +310,29 @@ void SimpleRenderer::draw_quad2d( vec2 const &bl, vec2 const &tr, rgba_fl const 
       vertex_t( vec3( bl.x, bl.y, 0.0f ), vec2( 0.0f, 1.0f ), color ), 
       vertex_t( vec3( tr.x, bl.y, 0.0f ), vec2( 1.0f, 1.0f ), color ), 
       vertex_t( vec3( tr.x, tr.y, 0.0f ), vec2( 1.0f, 0.0f ), color ),
+   };
+
+   draw_vertex_array( PRIMITIVE_TRIANGLES, vertices, 6 );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::draw_quad3d( vec3 const &origin, 
+   vec3 const &right, float neg_x_extents, float pos_x_extents, 
+   vec3 const &up, float neg_y_extents, float pos_y_extents, 
+   rgba_fl const &color ) 
+{
+   vec3 bl = origin + neg_x_extents * right + neg_y_extents * up;
+   vec3 tl = origin + neg_x_extents * right + pos_y_extents * up;
+   vec3 br = origin + pos_x_extents * right + neg_y_extents * up;
+   vec3 tr = origin + pos_x_extents * right + pos_y_extents * up;
+
+   vertex_t vertices[] = {
+      vertex_t( bl, vec2( 0.0f, 1.0f ), color ), 
+      vertex_t( tr, vec2( 1.0f, 0.0f ), color ), 
+      vertex_t( tl, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( bl, vec2( 0.0f, 1.0f ), color ), 
+      vertex_t( br, vec2( 1.0f, 1.0f ), color ), 
+      vertex_t( tr, vec2( 1.0f, 0.0f ), color ),
    };
 
    draw_vertex_array( PRIMITIVE_TRIANGLES, vertices, 6 );

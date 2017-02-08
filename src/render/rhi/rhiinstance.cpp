@@ -13,6 +13,9 @@
 #include "render/rhi/rhidevice.h"
 #include "render/rhi/rhioutput.h"
 
+#pragma comment( lib, "d3d11.lib" )
+#pragma comment( lib, "DXGI.lib" )
+
 /************************************************************************/
 /*                                                                      */
 /* DEFINES AND CONSTANTS                                                */
@@ -87,7 +90,10 @@ RHIInstance::RHIInstance()
 {
    // Create the lowest level object - this is what everthing else comes from
    // Debug Setup
-   #if 0
+   // INIT - BEFORE CREATION OF ANY D3D OBJECTS
+   debug = nullptr; // IDXGIDebug
+   debug_module = nullptr; // HMODULE
+   #if defined(_DEBUG)
       debug_module = ::LoadLibraryA( "Dxgidebug.dll" );
       typedef HRESULT (*GetDebugModuleCB)( REFIID, void** );
       GetDebugModuleCB cb = (GetDebugModuleCB) ::GetProcAddress( debug_module, "DXGIGetDebugInterface" );
@@ -95,13 +101,6 @@ RHIInstance::RHIInstance()
 
       debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
    #endif
-
-
-   /*
-   debug = nullptr;
-   hr = ::DXGIGetDebugInterface( IID_IDXGIDebug, (void**)&debug );
-   ASSERT( SUCCEEDED(hr) );
-   */
 
    gRenderInstance = this;
 }
@@ -112,7 +111,7 @@ RHIInstance::~RHIInstance()
    gRenderInstance = nullptr;
 
    // Debug Shutdown
-   #if 0
+   if (debug != nullptr) {
       debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
 
       DX_SAFE_RELEASE(debug);
@@ -120,7 +119,7 @@ RHIInstance::~RHIInstance()
          FreeLibrary(debug_module);
          debug_module = nullptr; 
       }
-   #endif
+   }
 }
 
 //------------------------------------------------------------------------
