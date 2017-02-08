@@ -16,6 +16,7 @@
 #include "render/rhi/rasterstate.h"
 #include "render/rhi/constantbuffer.h"
 #include "render/vertex.h"
+#include "render/matrix.h"
 
 /************************************************************************/
 /*                                                                      */

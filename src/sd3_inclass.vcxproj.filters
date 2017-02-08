@@ -22,6 +22,7 @@
     <ClCompile Include="render\rhi\constantbuffer.cpp" />
     <ClCompile Include="render\vertex.cpp" />
     <ClCompile Include="render\rhi\blendstate.cpp" />
+    <ClCompile Include="render\matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -51,5 +52,6 @@
     <ClInclude Include="render\rhi\rasterstate.h" />
     <ClInclude Include="render\rhi\constantbuffer.h" />
     <ClInclude Include="render\rhi\blendstate.h" />
+    <ClInclude Include="render\matrix.h" />
   </ItemGroup>
 </Project>
