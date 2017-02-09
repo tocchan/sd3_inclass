@@ -41,9 +41,12 @@ vertex_to_fragment_t VertexFunction( vertex_in_t vertex )
 {
    vertex_to_fragment_t out_data = (vertex_to_fragment_t)0;
 
-   float4 transformed_position = mul( float4( vertex.position, 1.0f ), PROJECTION );
+   float4 model_position = float4( vertex.position, 1.0f );
+   float4 world_position = mul( model_position, MODEL );
+   float4 view_position = mul( world_position, VIEW );
+   float4 clip_position = mul( view_position, PROJECTION );
 
-   out_data.position = transformed_position;
+   out_data.position = clip_position;
    out_data.uv = vertex.uv;
    return out_data;
 }
