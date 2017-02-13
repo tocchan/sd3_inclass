@@ -113,6 +113,12 @@ void SimpleRenderer::setup( uint width, uint height )
    default_depth_stencil = new Texture2D( rhi_device, width, height, IMAGEFORMAT_D24S8 );
    current_depth_stencil = nullptr;
 
+   // Set initial depth stencil
+   depth_stencil_desc.depth_test_enabled = false;
+   depth_stencil_desc.depth_writing_enabled = true;
+   depth_stencil_state = new DepthStencilState( rhi_device, depth_stencil_desc );
+   rhi_context->set_depth_stencil_state( depth_stencil_state );
+
    set_render_target(nullptr, nullptr);
 }
 
@@ -121,6 +127,7 @@ void SimpleRenderer::destroy()
 {
    SAFE_DELETE(current_blend_state);
    SAFE_DELETE(default_raster_state);
+   SAFE_DELETE(depth_stencil_state);
    SAFE_DELETE(matrix_cb);
    SAFE_DELETE(time_cb);
    SAFE_DELETE(temp_vbo);
@@ -246,6 +253,28 @@ void SimpleRenderer::disable_blend()
    blend_state.enabled = false;
 
    current_blend_state = bs;
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::enable_depth_test( bool enable )
+{
+   if (depth_stencil_desc.depth_test_enabled != enable) {
+      depth_stencil_desc.depth_test_enabled = enable;
+      SAFE_DELETE( depth_stencil_state );
+      depth_stencil_state = new DepthStencilState( rhi_device, depth_stencil_desc );
+      rhi_context->set_depth_stencil_state( depth_stencil_state );
+   }
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::enable_depth_write( bool enable )
+{
+   if (depth_stencil_desc.depth_writing_enabled != enable) {
+      depth_stencil_desc.depth_writing_enabled = enable;
+      SAFE_DELETE( depth_stencil_state );
+      depth_stencil_state = new DepthStencilState( rhi_device, depth_stencil_desc );
+      rhi_context->set_depth_stencil_state( depth_stencil_state );
+   }
 }
 
 //------------------------------------------------------------------------

@@ -350,6 +350,7 @@
     <ClCompile Include="render\matrix.cpp" />
     <ClCompile Include="render\rhi\blendstate.cpp" />
     <ClCompile Include="render\rhi\constantbuffer.cpp" />
+    <ClCompile Include="render\rhi\depthstencilstate.cpp" />
     <ClCompile Include="render\rhi\dx11.cpp" />
     <ClCompile Include="core\file.cpp" />
     <ClCompile Include="render\rhi\rasterstate.cpp" />
@@ -379,6 +380,7 @@
     <ClInclude Include="render\matrix.h" />
     <ClInclude Include="render\rhi\blendstate.h" />
     <ClInclude Include="render\rhi\constantbuffer.h" />
+    <ClInclude Include="render\rhi\depthstencilstate.h" />
     <ClInclude Include="render\rhi\dx11.h" />
     <ClInclude Include="core\file.h" />
     <ClInclude Include="render\rhi\rasterstate.h" />

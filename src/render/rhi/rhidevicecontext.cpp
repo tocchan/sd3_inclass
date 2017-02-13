@@ -11,6 +11,7 @@
 
 #include "render/rhi/blendstate.h"
 #include "render/rhi/rasterstate.h"
+#include "render/rhi/depthstencilstate.h"
 #include "render/rhi/sampler.h"
 #include "render/rhi/shaderprogram.h"
 #include "render/rhi/texture2d.h"
@@ -157,6 +158,12 @@ void RHIDeviceContext::set_blend_state( BlendState *bs )
    dx_context->OMSetBlendState( bs->dx_state, 
       constant, 
       0xffffffff );
+}
+
+//------------------------------------------------------------------------
+void RHIDeviceContext::set_depth_stencil_state( DepthStencilState *dss ) 
+{
+   dx_context->OMSetDepthStencilState( dss->dx_state, 0U );
 }
 
 //------------------------------------------------------------------------

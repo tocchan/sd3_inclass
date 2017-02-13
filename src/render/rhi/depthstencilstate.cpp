@@ -1,14 +1,10 @@
-#pragma once
-#if !defined( __RENDER_CONTEXT__ )
-#define __RENDER_CONTEXT__
-
 /************************************************************************/
 /*                                                                      */
 /* INCLUDE                                                              */
 /*                                                                      */
 /************************************************************************/
-#include "core/rgba.h"
-#include "render/rhi/dx11.h"
+#include "depthstencilstate.h"
+
 #include "render/rhi/rhidevice.h"
 
 /************************************************************************/
@@ -28,16 +24,6 @@
 /* TYPES                                                                */
 /*                                                                      */
 /************************************************************************/
-class RHIInstance;  // System level singleton
-class RHIDevice;     // physical GPU
-class RHIDeviceContext;    // Potential Display/Background worker
-class RHIOutput;
-class Sampler;
-class ShaderProgram;
-class Texture2D;
-class RasterState;
-class BlendState;
-class DepthStencilState;
 
 /************************************************************************/
 /*                                                                      */
@@ -51,48 +37,11 @@ class DepthStencilState;
 /*                                                                      */
 /************************************************************************/
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Specific State for Rendering
-class RHIDeviceContext 
-{
-   public:
-      RHIDeviceContext( RHIDevice *owner, ID3D11DeviceContext *ctx );
-      ~RHIDeviceContext();
-
-      void clear_state();
-      void flush();
-
-      void clear_color_target( Texture2D *output, rgba_fl const &color );
-      void clear_depth_target( Texture2D *output, float depth = 1.0f, uint8_t stencil = 0 );
-
-      void set_color_target( Texture2D *color_target, Texture2D *depth_stencil_target = nullptr );
-      void set_viewport( uint x, uint y, uint w, uint h );
-
-      void set_raster_state( RasterState *rs );
-      void set_blend_state( BlendState *bs );
-      void set_depth_stencil_state( DepthStencilState *dss );
-
-      void set_shader( ShaderProgram *shader );
-
-      void set_texture2d( uint const idx, Texture2D *tex );
-      inline void set_texture2d( Texture2D *tex ) { set_texture2d( 0, tex ); }
-
-      void set_sampler( uint const idx, Sampler *sampler );
-      inline void set_sampler( Sampler *sampler ) { set_sampler( 0, sampler ); }
-
-      void set_vertex_buffer( uint idx, VertexBuffer *vbo );
-      void set_topology( ePrimitiveType const top );
-
-      void draw( uint const vcount, uint offset = 0U ); 
-
-   public:
-      ID3D11DeviceContext *dx_context;
-      RHIDevice *device;
-};
-
-
-
+/************************************************************************/
+/*                                                                      */
+/* LOCAL VARIABLES                                                      */
+/*                                                                      */
+/************************************************************************/
 
 /************************************************************************/
 /*                                                                      */
@@ -102,9 +51,48 @@ class RHIDeviceContext
 
 /************************************************************************/
 /*                                                                      */
-/* FUNCTION PROTOTYPES                                                  */
+/* LOCAL FUNCTIONS                                                      */
 /*                                                                      */
 /************************************************************************/
 
+/************************************************************************/
+/*                                                                      */
+/* EXTERNAL FUNCTIONS                                                   */
+/*                                                                      */
+/************************************************************************/
+//------------------------------------------------------------------------
+DepthStencilState::DepthStencilState( RHIDevice *owner, 
+   depth_stencil_desc_t const &desc )
+   : device(owner)
+   , dx_state(nullptr)
+{
+   D3D11_DEPTH_STENCIL_DESC dxdesc;
+   MemZero( &dxdesc );
 
-#endif 
+   dxdesc.DepthEnable = desc.depth_writing_enabled || desc.depth_test_enabled;
+   dxdesc.DepthWriteMask = desc.depth_writing_enabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+   dxdesc.DepthFunc = desc.depth_test_enabled ? D3D11_COMPARISON_LESS : D3D11_COMPARISON_ALWAYS;
+   dxdesc.StencilEnable = FALSE;
+   
+   HRESULT result = device->dx_device->CreateDepthStencilState( &dxdesc, &dx_state );
+   UNREFERENCED(result); // ASSERT
+}
+
+//------------------------------------------------------------------------
+DepthStencilState::~DepthStencilState()
+{
+   DX_SAFE_RELEASE(dx_state);
+}
+
+
+/************************************************************************/
+/*                                                                      */
+/* COMMANDS                                                             */
+/*                                                                      */
+/************************************************************************/
+
+/************************************************************************/
+/*                                                                      */
+/* UNIT TESTS                                                           */
+/*                                                                      */
+/************************************************************************/

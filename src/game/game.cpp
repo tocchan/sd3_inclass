@@ -168,6 +168,7 @@ void Game::render()
    renderer.set_render_target( nullptr );
    renderer.clear_color( 0x9288ffff );
    renderer.clear_depth();
+   renderer.enable_depth_test( true );
 
    renderer.set_viewport( 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
 
@@ -197,7 +198,7 @@ void Game::render()
       vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
       vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
 
-   renderer.draw_quad3d( vec3(0.0f, 0.0f, 5.0f), 
+   renderer.draw_quad3d( vec3(2.0f, 0.0f, 5.0f), 
       vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
       vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
 

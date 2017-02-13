@@ -13,6 +13,7 @@
 #include "render/rhi/rhidevicecontext.h"
 #include "render/rhi/rhioutput.h"
 #include "render/rhi/blendstate.h"
+#include "render/rhi/depthstencilstate.h"
 #include "render/rhi/rasterstate.h"
 #include "render/rhi/constantbuffer.h"
 #include "render/vertex.h"
@@ -133,10 +134,14 @@ class SimpleRenderer
       void enable_blend( eBlendFactor src, eBlendFactor dest );
       void disable_blend();
 
+      void enable_depth_test( bool enable );
+      void enable_depth_write( bool enable );
+
       // [A02] CLEARING 
       // Clears currently bound target
       void clear_color( rgba_fl const &color ); 
-      void clear_depth( float depth = 1.0f, uint8_t stencil = 0 );
+      void clear_depth( float depth = 1.0f, 
+         uint8_t stencil = 0 );
 
       // Clears specified target
       void clear_target_color( Texture2D *target, rgba_fl const &color );
@@ -198,6 +203,9 @@ class SimpleRenderer
 
       blend_state_t blend_state;
       BlendState *current_blend_state;
+
+      depth_stencil_desc_t depth_stencil_desc;
+      DepthStencilState *depth_stencil_state;
 
       matrix_buffer_t matrix_data;
       ConstantBuffer *matrix_cb;
