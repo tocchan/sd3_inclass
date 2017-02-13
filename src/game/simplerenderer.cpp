@@ -94,7 +94,6 @@ void SimpleRenderer::setup( uint width, uint height )
 
    rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 1" );
 
-   set_render_target(nullptr);
 
    default_raster_state = new RasterState( rhi_device );
    rhi_context->set_raster_state( default_raster_state );
@@ -109,6 +108,12 @@ void SimpleRenderer::setup( uint width, uint height )
    set_constant_buffer( TIME_BUFFER_INDEX, time_cb );
 
    temp_vbo = new VertexBuffer( rhi_device, nullptr, 32, BUFFERUSAGE_DYNAMIC );
+
+   // Just create a default depth stencil of your back buffers width & height
+   default_depth_stencil = new Texture2D( rhi_device, width, height, IMAGEFORMAT_D24S8 );
+   current_depth_stencil = nullptr;
+
+   set_render_target(nullptr, nullptr);
 }
 
 //------------------------------------------------------------------------
@@ -134,7 +139,8 @@ void SimpleRenderer::set_title( char const *new_title )
 
 
 //------------------------------------------------------------------------
-void SimpleRenderer::set_render_target( Texture2D *color_target )
+void SimpleRenderer::set_render_target( Texture2D *color_target,
+   Texture2D *depth_target )
 {
    if (color_target != nullptr) {
       if (color_target->is_render_target()) {
@@ -144,7 +150,12 @@ void SimpleRenderer::set_render_target( Texture2D *color_target )
       current_target = rhi_output->get_render_target();
    }
 
-   rhi_context->set_color_target( current_target );
+   if (depth_target == nullptr) {
+      depth_target = default_depth_stencil;
+   }
+
+   current_depth_stencil = depth_target;
+   rhi_context->set_color_target( current_target, depth_target );
 }
 
 //------------------------------------------------------------------------
@@ -241,6 +252,12 @@ void SimpleRenderer::disable_blend()
 void SimpleRenderer::clear_color( rgba_fl const &color ) 
 {
    rhi_context->clear_color_target( current_target, color );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::clear_depth( float depth, uint8_t stencil )
+{
+   rhi_context->clear_depth_target( current_depth_stencil, depth, stencil );
 }
 
 //------------------------------------------------------------------------

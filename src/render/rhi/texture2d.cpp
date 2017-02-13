@@ -241,6 +241,7 @@ void Texture2D::destroy()
 
 //------------------------------------------------------------------------
 void Texture2D::create_views()
+
 {
    ID3D11Device *dd = device->dx_device;
 

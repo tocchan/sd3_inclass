@@ -111,7 +111,7 @@ class SimpleRenderer
       // RENDER TARGETS
       // [A02]
       // Setting nullptr should default to the output. 
-      void set_render_target( Texture2D *color_target );
+      void set_render_target( Texture2D *color_target, Texture2D *depth_target = nullptr );
 
       // [A02]
       void set_viewport( uint x, uint y, uint width, uint height );
@@ -136,6 +136,7 @@ class SimpleRenderer
       // [A02] CLEARING 
       // Clears currently bound target
       void clear_color( rgba_fl const &color ); 
+      void clear_depth( float depth = 1.0f, uint8_t stencil = 0 );
 
       // Clears specified target
       void clear_target_color( Texture2D *target, rgba_fl const &color );
@@ -189,6 +190,9 @@ class SimpleRenderer
       RHIOutput *rhi_output;
 
       Texture2D *current_target;
+
+      Texture2D *default_depth_stencil;
+      Texture2D *current_depth_stencil;
 
       RasterState *default_raster_state;
 

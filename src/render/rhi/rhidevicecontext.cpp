@@ -107,13 +107,25 @@ void RHIDeviceContext::clear_color_target( Texture2D *output, rgba_fl const &col
 }
 
 //------------------------------------------------------------------------
-void RHIDeviceContext::set_color_target( Texture2D *tex ) 
+void RHIDeviceContext::clear_depth_target( Texture2D *output
+   , float depth /*= 1.0f*/
+   , uint8_t stencil /*= 0*/ )
 {
-   if (tex->is_render_target()) {
-      dx_context->OMSetRenderTargets(1,
-         &tex->dx_rtv,
-         nullptr);
+   if (output != nullptr) {
+      dx_context->ClearDepthStencilView( output->dx_dsv, 
+         D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 
+         depth, stencil );
    }
+}
+
+//------------------------------------------------------------------------
+void RHIDeviceContext::set_color_target( Texture2D *color, Texture2D *depth_stencil_target ) 
+{
+   // ASSERT_OR_DIE( color->is_render_target() );
+   // ASSERT_OR_DIE( depth_stencil_target->is_depth_stencil_target() );
+   dx_context->OMSetRenderTargets(1,
+      &color->dx_rtv,
+      depth_stencil_target != nullptr ? depth_stencil_target->dx_dsv : nullptr );
 }
 
 //------------------------------------------------------------------------

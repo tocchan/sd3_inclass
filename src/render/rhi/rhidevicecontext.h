@@ -63,8 +63,9 @@ class RHIDeviceContext
       void flush();
 
       void clear_color_target( Texture2D *output, rgba_fl const &color );
+      void clear_depth_target( Texture2D *output, float depth = 1.0f, uint8_t stencil = 0 );
 
-      void set_color_target( Texture2D *target );
+      void set_color_target( Texture2D *color_target, Texture2D *depth_stencil_target = nullptr );
       void set_viewport( uint x, uint y, uint w, uint h );
 
       void set_raster_state( RasterState *rs );
