@@ -63,6 +63,20 @@ struct time_buffer_t
    float system_frame_time;
 };
 
+struct light_buffer_t
+{
+   rgba_fl ambient;  // <r, g, b, intensity>
+
+   // DIRECTIONAL LIGHT
+   rgba_fl dir_light_color;
+   vec4 light_direction;
+
+   // POINT LIGHT
+   rgba_fl light_color; // <r, g, b, intensity>
+   vec4 light_position;
+   vec4 attenuation;
+};
+
 struct blend_state_t
 {
    bool enabled;

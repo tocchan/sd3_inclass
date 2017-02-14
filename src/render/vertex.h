@@ -111,6 +111,7 @@ struct vertex_t
 {
    public:
       vec3 position;
+      vec3 normal;
       vec2 uv; 
       rgba_fl tint;
       
