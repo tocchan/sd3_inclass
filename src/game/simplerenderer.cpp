@@ -442,16 +442,32 @@ void SimpleRenderer::draw_quad3d( vec3 const &origin,
    vec3 br = origin + pos_x_extents * right + neg_y_extents * up;
    vec3 tr = origin + pos_x_extents * right + pos_y_extents * up;
 
+   vec3 normal = up.cross(right);
+
    vertex_t vertices[] = {
-      vertex_t( bl, vec2( 0.0f, 1.0f ), color ), 
-      vertex_t( tr, vec2( 1.0f, 0.0f ), color ), 
-      vertex_t( tl, vec2( 0.0f, 0.0f ), color ), 
-      vertex_t( bl, vec2( 0.0f, 1.0f ), color ), 
-      vertex_t( br, vec2( 1.0f, 1.0f ), color ), 
-      vertex_t( tr, vec2( 1.0f, 0.0f ), color ),
+      vertex_t( bl, normal, vec2( 0.0f, 1.0f ), color ), 
+      vertex_t( tr, normal, vec2( 1.0f, 0.0f ), color ), 
+      vertex_t( tl, normal, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( bl, normal, vec2( 0.0f, 1.0f ), color ), 
+      vertex_t( br, normal, vec2( 1.0f, 1.0f ), color ), 
+      vertex_t( tr, normal, vec2( 1.0f, 0.0f ), color ),
    };
 
    draw_vertex_array( PRIMITIVE_TRIANGLES, vertices, 6 );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::draw_line( vec3 const &p0, 
+   vec3 const &p1, 
+   rgba_fl const &color /*= rgba_fl::WHITE*/ )
+{
+   
+   vertex_t vertices[] = {
+      vertex_t( p0, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( p1, vec2( 1.0f, 1.0f ), color ), 
+   };
+
+   draw_vertex_array( PRIMITIVE_LINES, vertices, 2 );
 }
 
 /************************************************************************/

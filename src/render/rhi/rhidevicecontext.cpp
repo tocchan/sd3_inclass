@@ -204,6 +204,10 @@ void RHIDeviceContext::set_topology( ePrimitiveType const topology )
 {
    D3D11_PRIMITIVE_TOPOLOGY d3d_prim;
    switch (topology) {
+      case PRIMITIVE_LINES:
+         d3d_prim = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+         break;
+
       case PRIMITIVE_TRIANGLES: 
       default:
          d3d_prim = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

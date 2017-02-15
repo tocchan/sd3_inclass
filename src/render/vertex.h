@@ -50,6 +50,14 @@ struct vertex_t
       vertex_t() {}
       vertex_t( vec3 const &pos, vec2 const &tex = vec2(0.0f), rgba_fl const &tint = rgba_fl::WHITE )
          : position(pos)
+         , normal(0, 0, -1)
+         , uv(tex)
+         , tint(tint)
+      {}
+
+      vertex_t( vec3 const &pos, vec3 const &normal, vec2 const &tex = vec2(0.0f), rgba_fl const &tint = rgba_fl::WHITE )
+         : position(pos)
+         , normal(normal)
          , uv(tex)
          , tint(tint)
       {}

@@ -192,13 +192,24 @@ void Game::render()
    aspect_ratio; 
 
    mat44 camera;
-   camera = MatrixMakeLookAt( vec3( 5.0f, 3.0f, -5.0f ), vec3( 0.0f, 0.0f, 3.0f ) );
+
+   // Get are camera transform
+   float t = (float)TimeGetSeconds();
+   float radius = 5.0f;
+   vec3 cam_pos = vec3( radius * cosf(t), 2.0f, -radius * sinf(t) );
+   camera = MatrixMakeLookAt( cam_pos, vec3( 0.0f, 0.0f, 0.0f ) );
 
    // renderer.set_projection_matrix( mat44::IDENTITY );
    // renderer.set_ortho_projection( vec2(aspect_ratio * -5.0f, -5.0f), vec2(aspect_ratio * 5.0f, 5.0f) );
    renderer.set_view_matrix( camera.get_inverse_orthonormal() );
    renderer.set_perspective_projection( D2R(60.0f), aspect_ratio, 0.1f, 100.0f );
 
+   renderer.set_shader( renderer.color_shader );
+   renderer.draw_line( vec3( 0.0f, 0.0f, 0.0f ), vec3( 1.0f, 0.0f, 0.0f ), rgba_fl::RED );
+   renderer.draw_line( vec3( 0.0f, 0.0f, 0.0f ), vec3( 0.0f, 1.0f, 0.0f ), rgba_fl::GREEN );
+   renderer.draw_line( vec3( 0.0f, 0.0f, 0.0f ), vec3( 0.0f, 0.0f, 1.0f ), rgba_fl::BLUE );
+
+   renderer.set_shader( renderer.unlit_shader );
    renderer.set_texture2d( diffuse_texture );
    renderer.draw_quad3d( vec3(0.0f, 0.0f, 3.0f), 
       vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,

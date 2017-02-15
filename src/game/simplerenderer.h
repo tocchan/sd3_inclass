@@ -189,13 +189,9 @@ class SimpleRenderer
          vec3 const &up, float neg_y_extents, float pos_y_extents, 
          rgba_fl const &color = rgba_fl::WHITE );
 
-      void draw_indexed( ePrimitiveType topology, VertexBuffer *vbo, IndexBuffer *ibo, uint const vertex_count ) 
-      {
-         UNREFERENCED_PARAMETER(topology);
-         UNREFERENCED_PARAMETER(ibo);
-         UNREFERENCED_PARAMETER(vbo);
-         UNREFERENCED_PARAMETER(vertex_count);
-      }
+      void draw_line( vec3 const &p0, 
+         vec3 const &p1, 
+         rgba_fl const &color = rgba_fl::WHITE );
 
    public:
       RHIDevice *rhi_device;
