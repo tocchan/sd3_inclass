@@ -32,7 +32,7 @@
 /************************************************************************/
 #define MATRIX_BUFFER_INDEX (0)
 #define TIME_BUFFER_INDEX (1)
-// 2 is going to be LIGHTING
+#define LIGHT_BUFFER_INDEX (2)
 // 3 is going to be ANIMATION [AES]
 
 // 4 and on, User Defined;
@@ -65,16 +65,19 @@ struct time_buffer_t
 
 struct light_buffer_t
 {
-   rgba_fl ambient;  // <r, g, b, intensity>
+   light_buffer_t()
+      : ambient(1, 1, 1, 1)
+      , light_color(1, 1, 1, 0)
+      , light_position(0, 0, 0, 1)
+      , attenuation(1, 0, 0, 0)     // will effectively dampen the light - at intensity 1, this will make the light constant
+   {}
 
-   // DIRECTIONAL LIGHT
-   rgba_fl dir_light_color;
-   vec4 light_direction;
+   rgba_fl ambient;  // <r, g, b, intensity>
 
    // POINT LIGHT
    rgba_fl light_color; // <r, g, b, intensity>
-   vec4 light_position;
-   vec4 attenuation;
+   vec4 light_position; // <x, y, z, padding>  // variables can not cross a 16-byte boundary, so we pad out 
+   vec4 attenuation;    // <constant, linear, quadratic, unused>
 };
 
 struct blend_state_t
@@ -144,6 +147,7 @@ class SimpleRenderer
 
       void enable_depth_test( bool enable );
       void enable_depth_write( bool enable );
+      void enable_depth( bool test, bool write );
 
       // [A02] CLEARING 
       // Clears currently bound target
@@ -171,6 +175,16 @@ class SimpleRenderer
 
       void set_constant_buffer( uint idx, ConstantBuffer *cb );
 
+      // LIGHTING
+      void set_ambient_light( float intensity, rgba_fl const &color = rgba_fl::WHITE );
+
+      // Goal of assignment is to support multiple of these
+      // cone lights, directional lights, and point lights
+      // spec maps, and TBN
+      void set_point_light( vec3 const &pos, rgba_fl const &color, float intensity = 1.0f, vec3 const &attenuation = vec3( 0, 0, 1 ) );
+
+      // disabling a light is the same as setting it to have no intensity (it won't contribute any light)
+      inline void disable_point_light() { set_point_light( vec3(0.0f), rgba_fl::WHITE, 0.0f, vec3(1, 0, 0) ); }
 
 
       // [A02]
@@ -192,6 +206,8 @@ class SimpleRenderer
       void draw_line( vec3 const &p0, 
          vec3 const &p1, 
          rgba_fl const &color = rgba_fl::WHITE );
+      void draw_point( vec3 const &p, rgba_fl const &color = rgba_fl::WHITE );
+
 
    public:
       RHIDevice *rhi_device;
@@ -232,6 +248,9 @@ class SimpleRenderer
 
       time_buffer_t time_data;
       ConstantBuffer *time_cb;
+
+      light_buffer_t light_data;
+      ConstantBuffer *light_cb;
 
       // DATA FOR TEMP MESH CREATION
       VertexBuffer *temp_vbo;

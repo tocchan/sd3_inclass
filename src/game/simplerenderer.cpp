@@ -92,7 +92,7 @@ void SimpleRenderer::setup( uint width, uint height )
    RHIInstance *ri = RHIInstance::GetInstance();
    ri->create_output( &rhi_device, &rhi_context, &rhi_output, width, height );
 
-   rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 1" );
+   rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 4" );
 
    default_raster_state = new RasterState( rhi_device );
    rhi_context->set_raster_state( default_raster_state );
@@ -101,10 +101,12 @@ void SimpleRenderer::setup( uint width, uint height )
 
    matrix_cb = new ConstantBuffer( rhi_device, &matrix_data, sizeof(matrix_data) );
    time_cb = new ConstantBuffer( rhi_device, &time_data, sizeof(time_data) );
+   light_cb = new ConstantBuffer( rhi_device, &light_data, sizeof(light_data) );
 
    // BIND constant buffers
    set_constant_buffer( MATRIX_BUFFER_INDEX, matrix_cb );
    set_constant_buffer( TIME_BUFFER_INDEX, time_cb );
+   set_constant_buffer( LIGHT_BUFFER_INDEX, light_cb );
 
    temp_vbo = new VertexBuffer( rhi_device, nullptr, 32, BUFFERUSAGE_DYNAMIC );
 
@@ -157,8 +159,11 @@ void SimpleRenderer::destroy()
    SAFE_DELETE(current_blend_state);
    SAFE_DELETE(default_raster_state);
    SAFE_DELETE(depth_stencil_state);
-   SAFE_DELETE(matrix_cb);
+
+   SAFE_DELETE(light_cb);
    SAFE_DELETE(time_cb);
+   SAFE_DELETE(matrix_cb);
+
    SAFE_DELETE(temp_vbo);
 
    SAFE_DELETE(default_depth_stencil);
@@ -318,6 +323,9 @@ void SimpleRenderer::disable_blend()
 //------------------------------------------------------------------------
 void SimpleRenderer::enable_depth_test( bool enable )
 {
+   // deleting these each change is inefficient - honesty the state should be cached off
+   // since it is likely it will need to be set the same way next frame.  
+   // Ideally this would be stored with the shader imo.
    if (depth_stencil_desc.depth_test_enabled != enable) {
       depth_stencil_desc.depth_test_enabled = enable;
       SAFE_DELETE( depth_stencil_state );
@@ -336,6 +344,20 @@ void SimpleRenderer::enable_depth_write( bool enable )
       rhi_context->set_depth_stencil_state( depth_stencil_state );
    }
 }
+
+//------------------------------------------------------------------------
+void SimpleRenderer::enable_depth( bool test, bool write )
+{
+   if ((depth_stencil_desc.depth_writing_enabled != write)
+      || (depth_stencil_desc.depth_test_enabled != test)) {
+
+      depth_stencil_desc.depth_writing_enabled = write;
+      depth_stencil_desc.depth_test_enabled = test;
+      SAFE_DELETE( depth_stencil_state );
+      depth_stencil_state = new DepthStencilState( rhi_device, depth_stencil_desc );
+      rhi_context->set_depth_stencil_state( depth_stencil_state );
+   }
+} 
 
 //------------------------------------------------------------------------
 void SimpleRenderer::clear_color( rgba_fl const &color ) 
@@ -395,6 +417,26 @@ void SimpleRenderer::set_constant_buffer( uint idx, ConstantBuffer *cb )
    // rhi_context->set_constant_buffer( ... );
    rhi_context->dx_context->VSSetConstantBuffers( idx, 1, &cb->dx_buffer );
    rhi_context->dx_context->PSSetConstantBuffers( idx, 1, &cb->dx_buffer );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_ambient_light( float intensity, rgba_fl const &color /*= rgba_fl::WHITE*/ )
+{
+   light_data.ambient = rgba_fl( color.r, color.g, color.b, intensity );
+   light_cb->update( rhi_context, &light_data );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_point_light( vec3 const &pos
+   , rgba_fl const &color
+   , float intensity /*= 1.0f*/
+   , vec3 const &attenuation /*= vec3( 0, 0, 1 )*/ )
+{
+   light_data.light_position = vec4( pos, 1.0f );
+   light_data.light_color = rgba_fl( color.r, color.g, color.b, intensity );
+   light_data.attenuation = attenuation;
+
+   light_cb->update( rhi_context, &light_data );
 }
 
 //------------------------------------------------------------------------
@@ -468,6 +510,25 @@ void SimpleRenderer::draw_line( vec3 const &p0,
    };
 
    draw_vertex_array( PRIMITIVE_LINES, vertices, 2 );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::draw_point( vec3 const &p, rgba_fl const &color /*= rgba_fl::WHITE*/ )
+{
+   vec3 r = vec3( 0.2f, 0.0f, 0.0f );
+   vec3 u = vec3( 0.0f, 0.2f, 0.0f );
+   vec3 f = vec3( 0.0f, 0.0f, 0.2f );
+
+   vertex_t vertices[] = {
+      vertex_t( p - r, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( p + r, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( p - u, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( p + u, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( p - f, vec2( 0.0f, 0.0f ), color ), 
+      vertex_t( p + f, vec2( 0.0f, 0.0f ), color ), 
+   };
+
+   draw_vertex_array( PRIMITIVE_LINES, vertices, ARRAYSIZE(vertices) );
 }
 
 /************************************************************************/

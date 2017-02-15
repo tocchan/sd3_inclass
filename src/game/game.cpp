@@ -170,54 +170,79 @@ void Game::update_sim()
 void Game::render()
 {
    renderer.set_render_target( nullptr );
-   renderer.clear_color( 0x9288ffff );
+   renderer.clear_color( 0x102040ffU );
    renderer.clear_depth();
-   renderer.enable_depth_test( true );
 
    renderer.set_viewport( 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
-
    renderer.set_shader( renderer.unlit_shader );
-
-   /*
-   renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 100.0f, 100.0f ) );
-   renderer.draw( PRIMITIVE_TRIANGLES, quad_vbo, 6 );
-
-   renderer.set_texture2d( tex_particle );
-   renderer.enable_blend( BLEND_SRC_ALPHA, BLEND_INV_SRC_ALPHA );
-   renderer.draw_quad2d( vec2( 50.0f, 50.0f), vec2( 100.0f, 100.0f ) );
-   renderer.disable_blend();
-   */
-
-   float aspect_ratio = 1280.0f / 720.0f;
-   aspect_ratio; 
 
    mat44 camera;
 
    // Get are camera transform
    float t = (float)TimeGetSeconds();
-   float radius = 5.0f;
-   vec3 cam_pos = vec3( radius * cosf(t), 2.0f, -radius * sinf(t) );
-   camera = MatrixMakeLookAt( cam_pos, vec3( 0.0f, 0.0f, 0.0f ) );
+   float radius = 2.0f;
+
+   // uncomment to make camera move in a circle.  Currently it just goes back and forth
+   vec3 cam_pos = vec3( radius * cosf(.2f * t), 1.0f, -1.0f /*-radius * sinf(.2f * t)*/ );
+   camera = MatrixMakeLookAt( cam_pos, vec3( 0.0f, 0.0f, 3.0f ) );
+
+   float light_radius = 4.0f;
+   vec3 light_pos = vec3( light_radius * cosf(t), 0.0f, 0.0f /*-light_radius * sinf(t)*/ );
 
    // renderer.set_projection_matrix( mat44::IDENTITY );
    // renderer.set_ortho_projection( vec2(aspect_ratio * -5.0f, -5.0f), vec2(aspect_ratio * 5.0f, 5.0f) );
+   float aspect_ratio = 1280.0f / 720.0f;
    renderer.set_view_matrix( camera.get_inverse_orthonormal() );
    renderer.set_perspective_projection( D2R(60.0f), aspect_ratio, 0.1f, 100.0f );
 
+   renderer.enable_depth( true, true );
+
+   // Draw my basis
    renderer.set_shader( renderer.color_shader );
    renderer.draw_line( vec3( 0.0f, 0.0f, 0.0f ), vec3( 1.0f, 0.0f, 0.0f ), rgba_fl::RED );
    renderer.draw_line( vec3( 0.0f, 0.0f, 0.0f ), vec3( 0.0f, 1.0f, 0.0f ), rgba_fl::GREEN );
    renderer.draw_line( vec3( 0.0f, 0.0f, 0.0f ), vec3( 0.0f, 0.0f, 1.0f ), rgba_fl::BLUE );
 
-   renderer.set_shader( renderer.unlit_shader );
+   // draw a visualization of the point
+   renderer.draw_point( light_pos, rgba_fl::YELLOW );
+
+   // Draw two quads
+   renderer.set_ambient_light( .2f );
+   renderer.set_point_light( light_pos, rgba_fl::WHITE, 4.0f );
+   renderer.set_shader( renderer.light_shader );
    renderer.set_texture2d( diffuse_texture );
+
+   // Absolutely horrible way to draw a cube, but doing it for brevity
+   // Front
    renderer.draw_quad3d( vec3(0.0f, 0.0f, 3.0f), 
       vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
       vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
 
-   renderer.draw_quad3d( vec3(2.0f, 0.0f, 5.0f), 
-      vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
+   // Back
+   renderer.draw_quad3d( vec3(0.0f, 0.0f, 5.0f), 
+      vec3(-1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
       vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
+
+   // Left
+   renderer.draw_quad3d( vec3(-1.0f, 0.0f, 4.0f), 
+      vec3(0.0f, 0.0f,-1.0f), -1.0f, 1.0f,
+      vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
+
+   // Right
+   renderer.draw_quad3d( vec3( 1.0f, 0.0f, 4.0f), 
+      vec3(0.0f, 0.0f, 1.0f), -1.0f, 1.0f,
+      vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
+
+   // Top
+   renderer.draw_quad3d( vec3(0.0f, 1.0f, 4.0f), 
+      vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
+      vec3(0.0f, 0.0f, 1.0f), -1.0f, 1.0f );
+
+   // Bottom
+   renderer.draw_quad3d( vec3(0.0f, -1.0f, 3.0f), 
+      vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
+      vec3(0.0f, 0.0f,-1.0f), -1.0f, 1.0f );
+
 
    renderer.present();
 }
@@ -232,7 +257,7 @@ void Game::init_rendering()
    renderer.setup( width, height );
 
    // Create Resources
-   diffuse_texture = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
+   diffuse_texture = new Texture2D( renderer.rhi_device, "image/stone_diffuse.png" );
 }
 
 //------------------------------------------------------------------------
