@@ -104,6 +104,10 @@ float4 FragmentFunction( vertex_to_fragment_t data ) : SV_Target0
       + distance_to_light * ATTENUATION.y
       + distance_to_light * distance_to_light * ATTENUATION.z);
 
+   // don't allow attenuation to go above one (so don't allow it to blow out the image)
+   attenuation = saturate(attenuation);
+
+
    float4 light_color = float4( LIGHT_COLOR.xyz, 1.0f ); 
    float4 light_factor = light_color * dot3 * attenuation;
 
