@@ -184,6 +184,20 @@ bool SimpleRenderer::is_closed() const
 }
 
 //------------------------------------------------------------------------
+void SimpleRenderer::set_model_matrix( mat44 const &model )
+{
+   matrix_data.model = model.get_transpose();
+   matrix_cb->update( rhi_context, &matrix_data );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_view_matrix( mat44 const &view )
+{
+   matrix_data.view = view.get_transpose();
+   matrix_cb->update( rhi_context, &matrix_data );
+}
+
+//------------------------------------------------------------------------
 void SimpleRenderer::set_projection_matrix( mat44 const &proj )
 {
    matrix_data.projection = proj.get_transpose();

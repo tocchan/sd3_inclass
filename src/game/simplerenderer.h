@@ -141,7 +141,10 @@ class SimpleRenderer
          UNREFERENCED_PARAMETER(h);
       }
 
+      void set_model_matrix( mat44 const &model );
+      void set_view_matrix( mat44 const &view );
       void set_projection_matrix( mat44 const &proj );
+
       void set_ortho_projection( vec2 const &bottom_left, vec2 const &top_right );
       void set_perspective_projection( float const fov_radians, float aspect_ratio, float const nz, float const fz );
 
