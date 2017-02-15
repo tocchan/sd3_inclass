@@ -233,7 +233,7 @@ void ShaderProgram::create_input_layout()
    desc[1].SemanticIndex = 0;
    desc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT; 
    desc[1].InputSlot = 0U;
-   desc[1].AlignedByteOffset = offsetof( vertex_t, position );
+   desc[1].AlignedByteOffset = offsetof( vertex_t, normal );
    desc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA; 
    desc[1].InstanceDataStepRate = 0U;
 

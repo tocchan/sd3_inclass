@@ -69,6 +69,7 @@ class RHIInstance
    public:
       // STATICS
       static RHIInstance* GetInstance();
+      static void ReportLiveObjects();
 };
 
 

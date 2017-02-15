@@ -9,6 +9,8 @@
 /************************************************************************/
 #include "core/types.h"
 
+#include "core/rgba.h"
+
 /************************************************************************/
 /*                                                                      */
 /* DEFINES AND CONSTANTS                                                */
@@ -56,6 +58,7 @@ class Image
       ~Image();
 
       bool load_from_file( char const *filename );
+      bool create_clear( uint width, uint height, rgba_fl color );
       void destroy();
 
       inline bool is_valid() const { return nullptr != buffer; }

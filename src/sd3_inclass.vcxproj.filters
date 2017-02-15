@@ -25,6 +25,7 @@
     <ClCompile Include="render\matrix.cpp" />
     <ClCompile Include="render\rhi\depthstencilstate.cpp" />
     <ClCompile Include="core\vector.cpp" />
+    <ClCompile Include="core\time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -57,5 +58,6 @@
     <ClInclude Include="render\matrix.h" />
     <ClInclude Include="render\rhi\depthstencilstate.h" />
     <ClInclude Include="core\vector.h" />
+    <ClInclude Include="core\time.h" />
   </ItemGroup>
 </Project>

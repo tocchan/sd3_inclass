@@ -104,18 +104,14 @@ class Game
 
       //------------------------------------------------------------------------
       SimpleRenderer renderer;
-      ShaderProgram *my_shader;
-      VertexBuffer *quad_vbo;
 
-      Texture2D *tex_sample;
-      Texture2D *tex_particle;
-      Sampler *point_sampler;
+      Texture2D *diffuse_texture;
 
       eQuitReason quit_reason;
       GameState *current_state;
 
-      time_constant_t time;
-      ConstantBuffer *time_constants;
+      float delta_time;
+      float prev_frame_time;
 
       //------------------------------------------------------------------------
       static Game *sInstance;

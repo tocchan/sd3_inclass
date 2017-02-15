@@ -343,6 +343,7 @@
     <ClCompile Include="core\image.cpp" />
     <ClCompile Include="core\log.cpp" />
     <ClCompile Include="core\rgba.cpp" />
+    <ClCompile Include="core\time.cpp" />
     <ClCompile Include="core\vector.cpp" />
     <ClCompile Include="core\window.cpp" />
     <ClCompile Include="game\game.cpp" />
@@ -372,6 +373,7 @@
     <ClInclude Include="core\image.h" />
     <ClInclude Include="core\log.h" />
     <ClInclude Include="core\rgba.h" />
+    <ClInclude Include="core\time.h" />
     <ClInclude Include="core\types.h" />
     <ClInclude Include="core\util.h" />
     <ClInclude Include="core\vector.h" />

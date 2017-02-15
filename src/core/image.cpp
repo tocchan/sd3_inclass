@@ -100,6 +100,29 @@ bool Image::load_from_file( char const *filename )
 }
 
 //------------------------------------------------------------------------
+bool Image::create_clear( uint w, uint h, rgba_fl color )
+{
+   destroy();
+
+   width = w;
+   height = h;
+   format = IMAGEFORMAT_RGBA8;
+   bpp = 4;
+
+   uint size = width * height * bpp;
+   buffer = (byte_t*) ::malloc(size);
+   rgba_u32 c = color;
+
+   rgba_u32 *colors = (rgba_u32*)buffer;
+   uint count = width * height;
+   for (uint i = 0; i < count; ++i) {
+      colors[i] = c;
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------
 void Image::destroy()
 {
    if (nullptr != buffer) {

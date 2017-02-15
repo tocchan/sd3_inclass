@@ -8,6 +8,7 @@
 // A01
 #include "core/types.h"
 #include "core/image.h"
+#include "core/time.h"
 #include "game/game_config.h"
 
 #include "render/rhi/rhiinstance.h"
@@ -120,17 +121,20 @@ void Game::start()
    init_rendering();
 
    renderer.rhi_output->window->set_custom_message_handler( GameMessageHandler );
+
+   prev_frame_time = (float)TimeGetSeconds();
 };
 
 //------------------------------------------------------------------------
 void Game::run_frame()
 {
    // Process Window Messages
-   renderer.process_messages();
+   renderer.update(delta_time);
 
-   float dt = 0.01f;
-   time.time += dt;
-   time_constants->update( renderer.rhi_context, &time );
+   // Update my clock
+   float time = (float)TimeGetSeconds();
+   delta_time = time - prev_frame_time;
+   prev_frame_time = time;
 
    // update sim
    update_sim();
@@ -172,9 +176,7 @@ void Game::render()
 
    renderer.set_viewport( 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
 
-   renderer.set_shader( my_shader );
-   renderer.set_texture2d( tex_sample );
-   renderer.set_sampler( point_sampler );
+   renderer.set_shader( renderer.unlit_shader );
 
    /*
    renderer.set_ortho_projection( vec2(0.0f, 0.0f), vec2( 100.0f, 100.0f ) );
@@ -197,7 +199,7 @@ void Game::render()
    renderer.set_view_matrix( camera.get_inverse_orthonormal() );
    renderer.set_perspective_projection( D2R(60.0f), aspect_ratio, 0.1f, 100.0f );
 
-   renderer.set_texture2d( tex_sample );
+   renderer.set_texture2d( diffuse_texture );
    renderer.draw_quad3d( vec3(0.0f, 0.0f, 3.0f), 
       vec3(1.0f, 0.0f, 0.0f), -1.0f, 1.0f,
       vec3(0.0f, 1.0f, 0.0f), -1.0f, 1.0f );
@@ -218,41 +220,15 @@ void Game::init_rendering()
 
    renderer.setup( width, height );
 
-   // my_shader = new ShaderProgram( renderer.rhi_device, "hlsl/imageeffect/nop.hlsl" );
-   my_shader = renderer.rhi_device->create_shader_from_hlsl_file( "hlsl/ortho_textured.hlsl" );
-
-   // Create vertices
-   vertex_t vertices[] = {
-      vertex_t( vec3(  0.0f,    0.0f, 0.0f ),   vec2(0.0f, 1.0f) ), 
-      vertex_t( vec3(  100.0f,  100.0f, 0.0f ), vec2(1.0f, 0.0f) ),
-      vertex_t( vec3(  0.0f,    100.0f, 0.0f ), vec2(0.0f, 0.0f) ),
-      vertex_t( vec3(  0.0f,    0.0f, 0.0f ),   vec2(0.0f, 1.0f) ),
-      vertex_t( vec3(  100.0f,  0.0f, 0.0f ),   vec2(1.0f, 1.0f) ),
-      vertex_t( vec3(  100.0f,  100.0f, 0.0f ), vec2(1.0f, 0.0f) ),
-   };
-   
-   quad_vbo = renderer.rhi_device->create_vertex_buffer( vertices, 6 );
-
    // Create Resources
-   point_sampler = new Sampler( renderer.rhi_device, FILTER_POINT, FILTER_POINT );
-   tex_sample = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
-   tex_particle = new Texture2D( renderer.rhi_device, "font/arial64_0.png" );
-   
-   time.time = 0.0f;
-   time_constants = new ConstantBuffer( renderer.rhi_device, &time, sizeof(time) );
+   diffuse_texture = new Texture2D( renderer.rhi_device, "image/xenoblade.jpg" );
 }
 
 //------------------------------------------------------------------------
 void Game::cleanup_rendering()
 {
    // delete vb
-   SAFE_DELETE(quad_vbo);
-
-   SAFE_DELETE(point_sampler);
-   SAFE_DELETE(tex_particle);
-   SAFE_DELETE(tex_sample);
-   SAFE_DELETE(my_shader);
-   SAFE_DELETE(time_constants);
+   SAFE_DELETE(diffuse_texture);
 
    // cleanup renderer
    renderer.destroy();

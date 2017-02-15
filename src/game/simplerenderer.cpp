@@ -77,7 +77,7 @@ SimpleRenderer::SimpleRenderer()
    : rhi_device(nullptr)
    , rhi_context(nullptr)
    , rhi_output(nullptr)
-   , current_target(nullptr) 
+   , current_color_target(nullptr) 
    , matrix_cb(nullptr)
    , time_cb(nullptr)
    , temp_vbo(nullptr)
@@ -94,7 +94,6 @@ void SimpleRenderer::setup( uint width, uint height )
 
    rhi_output->window->set_title( "GUILDHALL : SD3 ASSIGNMENT 1" );
 
-
    default_raster_state = new RasterState( rhi_device );
    rhi_context->set_raster_state( default_raster_state );
 
@@ -109,6 +108,23 @@ void SimpleRenderer::setup( uint width, uint height )
 
    temp_vbo = new VertexBuffer( rhi_device, nullptr, 32, BUFFERUSAGE_DYNAMIC );
 
+   // Shaders
+   color_shader = new ShaderProgram( rhi_device, "hlsl/color.hlsl" );
+   unlit_shader = new ShaderProgram( rhi_device, "hlsl/unlit.hlsl" );
+   light_shader = new ShaderProgram( rhi_device, "hlsl/light.hlsl" );
+   
+   // white texture
+   Image image;
+   image.create_clear( 1, 1, rgba_fl::WHITE );
+   white_texture = new Texture2D( rhi_device, image );
+
+   // point sampler
+   point_sampler = new Sampler( rhi_device, FILTER_POINT, FILTER_POINT );
+   linear_sampler = new Sampler( rhi_device, FILTER_LINEAR, FILTER_LINEAR );
+
+   // set initial color target
+   default_color_target = rhi_output->get_render_target();
+
    // Just create a default depth stencil of your back buffers width & height
    default_depth_stencil = new Texture2D( rhi_device, width, height, IMAGEFORMAT_D24S8 );
    current_depth_stencil = nullptr;
@@ -120,11 +136,24 @@ void SimpleRenderer::setup( uint width, uint height )
    rhi_context->set_depth_stencil_state( depth_stencil_state );
 
    set_render_target(nullptr, nullptr);
+   set_sampler(nullptr);
+   set_texture2d(nullptr);
 }
 
 //------------------------------------------------------------------------
 void SimpleRenderer::destroy() 
 {
+   rhi_context->clear_state();
+
+   SAFE_DELETE(light_shader);
+   SAFE_DELETE(unlit_shader);
+   SAFE_DELETE(color_shader);
+
+   SAFE_DELETE(point_sampler);
+   SAFE_DELETE(linear_sampler);
+
+   SAFE_DELETE(white_texture);
+
    SAFE_DELETE(current_blend_state);
    SAFE_DELETE(default_raster_state);
    SAFE_DELETE(depth_stencil_state);
@@ -132,9 +161,13 @@ void SimpleRenderer::destroy()
    SAFE_DELETE(time_cb);
    SAFE_DELETE(temp_vbo);
 
+   SAFE_DELETE(default_depth_stencil);
+
    delete rhi_output;
    delete rhi_context;
    delete rhi_device;
+
+   RHIInstance::ReportLiveObjects();
 }
 
 //------------------------------------------------------------------------
@@ -151,10 +184,10 @@ void SimpleRenderer::set_render_target( Texture2D *color_target,
 {
    if (color_target != nullptr) {
       if (color_target->is_render_target()) {
-         current_target = color_target; 
+         current_color_target = color_target; 
       } // else, WTH?
    } else {
-      current_target = rhi_output->get_render_target();
+      current_color_target = default_color_target;
    }
 
    if (depth_target == nullptr) {
@@ -162,13 +195,26 @@ void SimpleRenderer::set_render_target( Texture2D *color_target,
    }
 
    current_depth_stencil = depth_target;
-   rhi_context->set_color_target( current_target, depth_target );
+   rhi_context->set_color_target( current_color_target, depth_target );
 }
 
 //------------------------------------------------------------------------
 void SimpleRenderer::set_viewport( uint x, uint y, uint w, uint h ) 
 {
    rhi_context->set_viewport( x, y, w, h );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::update( float delta_time ) 
+{
+   process_messages();
+
+   time_data.game_delta_time = delta_time;
+   time_data.system_delta_time = delta_time;
+   time_data.game_time += delta_time;
+   time_data.system_time += delta_time;
+
+   time_cb->update( rhi_context, &time_data );
 }
 
 //------------------------------------------------------------------------
@@ -294,7 +340,7 @@ void SimpleRenderer::enable_depth_write( bool enable )
 //------------------------------------------------------------------------
 void SimpleRenderer::clear_color( rgba_fl const &color ) 
 {
-   rhi_context->clear_color_target( current_target, color );
+   rhi_context->clear_color_target( current_color_target, color );
 }
 
 //------------------------------------------------------------------------
@@ -324,12 +370,22 @@ void SimpleRenderer::set_shader( ShaderProgram *program )
 //------------------------------------------------------------------------
 void SimpleRenderer::set_texture2d( uint tex_index, Texture2D *tex ) 
 {
+   // by default, use a white texture
+   if (tex == nullptr) {
+      tex = white_texture;
+   }
+
    rhi_context->set_texture2d( tex_index, tex );
 }
 
 //------------------------------------------------------------------------
 void SimpleRenderer::set_sampler( uint samp_index, Sampler *samp ) 
 {
+   // by default, use linear sampling
+   if (samp == nullptr) {
+      samp = linear_sampler; 
+   }
+
    rhi_context->set_sampler( samp_index, samp );
 }
 

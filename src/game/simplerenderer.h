@@ -59,8 +59,8 @@ struct time_buffer_t
 {
    float game_time;
    float system_time;
-   float game_frame_time;
-   float system_frame_time;
+   float game_delta_time;
+   float system_delta_time;
 };
 
 struct light_buffer_t
@@ -120,6 +120,7 @@ class SimpleRenderer
       // Cleanup - could just be the deconstructor.
       void destroy();
 
+      void update( float delta_time );
       void process_messages(); 
       bool is_closed() const; 
 
@@ -130,16 +131,6 @@ class SimpleRenderer
 
       // [A02]
       void set_viewport( uint x, uint y, uint width, uint height );
-
-      // [A02: Optional]
-      // Set the viewport using percentages of the size of the current render target.
-      void set_viewport_as_percent( float x, float y, float w, float h ) 
-      {
-         UNREFERENCED_PARAMETER(x);
-         UNREFERENCED_PARAMETER(y); 
-         UNREFERENCED_PARAMETER(w);
-         UNREFERENCED_PARAMETER(h);
-      }
 
       void set_model_matrix( mat44 const &model );
       void set_view_matrix( mat44 const &view );
@@ -211,11 +202,26 @@ class SimpleRenderer
       RHIDeviceContext *rhi_context;
       RHIOutput *rhi_output;
 
-      Texture2D *current_target;
+      // BASIC SHADERS
+      ShaderProgram *color_shader;
+      ShaderProgram *unlit_shader;
+      ShaderProgram *light_shader;
+
+      // BASIC SAMPLERS
+      Sampler *point_sampler; // wrapped point
+      Sampler *linear_sampler; // linear sampling
+
+      // DEFAUL TEXTURES
+      Texture2D *white_texture;
+
+      // RENDER TARGETS
+      Texture2D *default_color_target;
+      Texture2D *current_color_target;
 
       Texture2D *default_depth_stencil;
       Texture2D *current_depth_stencil;
 
+      // STATE MANAGEMENT
       RasterState *default_raster_state;
 
       blend_state_t blend_state;
@@ -224,12 +230,14 @@ class SimpleRenderer
       depth_stencil_desc_t depth_stencil_desc;
       DepthStencilState *depth_stencil_state;
 
+      // CONSTANT BUFFERS
       matrix_buffer_t matrix_data;
       ConstantBuffer *matrix_cb;
 
       time_buffer_t time_data;
       ConstantBuffer *time_cb;
 
+      // DATA FOR TEMP MESH CREATION
       VertexBuffer *temp_vbo;
 };
 
