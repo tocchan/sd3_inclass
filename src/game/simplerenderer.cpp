@@ -427,7 +427,7 @@ void SimpleRenderer::set_ambient_light( float intensity, rgba_fl const &color /*
 }
 
 //------------------------------------------------------------------------
-void SimpleRenderer::set_point_light( vec3 const &pos
+void SimpleRenderer::enable_point_light( vec3 const &pos
    , rgba_fl const &color
    , float intensity /*= 1.0f*/
    , vec3 const &attenuation /*= vec3( 0, 0, 1 )*/ )

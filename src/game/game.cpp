@@ -128,13 +128,13 @@ void Game::start()
 //------------------------------------------------------------------------
 void Game::run_frame()
 {
-   // Process Window Messages
-   renderer.update(delta_time);
-
    // Update my clock
    float time = (float)TimeGetSeconds();
    delta_time = time - prev_frame_time;
    prev_frame_time = time;
+   
+   // Process Window Messages
+   renderer.update(delta_time);
 
    // update sim
    update_sim();
@@ -208,7 +208,7 @@ void Game::render()
 
    // Draw two quads
    renderer.set_ambient_light( .2f );
-   renderer.set_point_light( light_pos, rgba_fl::WHITE, 4.0f );
+   renderer.enable_point_light( light_pos, rgba_fl::WHITE, 4.0f );
    renderer.set_shader( renderer.light_shader );
    renderer.set_texture2d( diffuse_texture );
 

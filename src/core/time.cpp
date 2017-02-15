@@ -75,7 +75,7 @@ uint __fastcall TimeGet_ms()
 //------------------------------------------------------------------------
 uint __fastcall TimeGet_us()
 {
-   uint64_t i = TimeGetOpCount() - gTime.ops_per_second;;
+   uint64_t i = TimeGetOpCount() - gTime.start_ops;;
    i = (i * 1000U * 1000U) / gTime.ops_per_second;   // f is operations per second, so I want to return micro seconds, so times the top by 1000000 us / 1 s
    return (uint)i;
 }
@@ -83,7 +83,7 @@ uint __fastcall TimeGet_us()
 //------------------------------------------------------------------------
 double __fastcall TimeGetSeconds()
 {
-   uint64_t op = TimeGetOpCount() - gTime.ops_per_second;
+   uint64_t op = TimeGetOpCount() - gTime.start_ops;
    return (double)op * gTime.seconds_per_op;
 }
 

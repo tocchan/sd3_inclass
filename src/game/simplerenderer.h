@@ -181,10 +181,10 @@ class SimpleRenderer
       // Goal of assignment is to support multiple of these
       // cone lights, directional lights, and point lights
       // spec maps, and TBN
-      void set_point_light( vec3 const &pos, rgba_fl const &color, float intensity = 1.0f, vec3 const &attenuation = vec3( 0, 0, 1 ) );
+      void enable_point_light( vec3 const &pos, rgba_fl const &color, float intensity = 1.0f, vec3 const &attenuation = vec3( 0, 0, 1 ) );
 
       // disabling a light is the same as setting it to have no intensity (it won't contribute any light)
-      inline void disable_point_light() { set_point_light( vec3(0.0f), rgba_fl::WHITE, 0.0f, vec3(1, 0, 0) ); }
+      inline void disable_point_light() { enable_point_light( vec3(0.0f), rgba_fl::WHITE, 0.0f, vec3(1, 0, 0) ); }
 
 
       // [A02]
