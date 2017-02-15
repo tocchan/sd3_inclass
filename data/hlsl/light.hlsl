@@ -85,6 +85,9 @@ float4 FragmentFunction( vertex_to_fragment_t data ) : SV_Target0
    float4 color = tTexture.Sample( sSampler, data.uv );
    float4 diffuse = color * data.tint;
 
+   // renormalize - the interpolation step may have skewed it
+   float3 normal = normalize(data.normal);
+
    // light factor
 
    // first, calculate ambient (just added in - once per fragment)
@@ -96,7 +99,7 @@ float4 FragmentFunction( vertex_to_fragment_t data ) : SV_Target0
    float distance_to_light = length(vector_to_light);
    float3 dir_to_light = vector_to_light / distance_to_light;
 
-   float dot3 = saturate( dot( dir_to_light, data.normal ) );
+   float dot3 = saturate( dot( dir_to_light, normal ) );
    float attenuation = LIGHT_COLOR.w / (ATTENUATION.x 
       + distance_to_light * ATTENUATION.y
       + distance_to_light * distance_to_light * ATTENUATION.z);
