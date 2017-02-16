@@ -97,6 +97,7 @@ void SimpleRenderer::setup( uint width, uint height )
    default_raster_state = new RasterState( rhi_device );
    rhi_context->set_raster_state( default_raster_state );
 
+   matrix_data.eye_position = vec3( 0.0f );
    MemZero( &time_data );
 
    matrix_cb = new ConstantBuffer( rhi_device, &matrix_data, sizeof(matrix_data) );
@@ -119,6 +120,10 @@ void SimpleRenderer::setup( uint width, uint height )
    Image image;
    image.create_clear( 1, 1, rgba_fl::WHITE );
    white_texture = new Texture2D( rhi_device, image );
+
+   // create a default normal texture
+   image.create_clear( 1, 1, rgba_fl(.5f, .5f, 1.0f, 1.0f) );
+   flat_normal_texture = new Texture2D( rhi_device, image );
 
    // point sampler
    point_sampler = new Sampler( rhi_device, FILTER_POINT, FILTER_POINT );
@@ -155,6 +160,7 @@ void SimpleRenderer::destroy()
    SAFE_DELETE(linear_sampler);
 
    SAFE_DELETE(white_texture);
+   SAFE_DELETE(flat_normal_texture);
 
    SAFE_DELETE(current_blend_state);
    SAFE_DELETE(default_raster_state);
@@ -252,6 +258,24 @@ void SimpleRenderer::set_view_matrix( mat44 const &view )
 void SimpleRenderer::set_projection_matrix( mat44 const &proj )
 {
    matrix_data.projection = proj.get_transpose();
+   matrix_cb->update( rhi_context, &matrix_data );
+}
+
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_camera_matrix( mat44 const &camera )
+{
+   vec3 position = camera.get_translation();
+   matrix_data.eye_position = position;
+
+   // this will also update the buffer
+   set_view_matrix( camera.get_inverse_orthonormal() );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_eye_position( vec3 const &eye_position )
+{
+   matrix_data.eye_position = eye_position;
    matrix_cb->update( rhi_context, &matrix_data );
 }
 
@@ -430,11 +454,23 @@ void SimpleRenderer::set_ambient_light( float intensity, rgba_fl const &color /*
 void SimpleRenderer::enable_point_light( vec3 const &pos
    , rgba_fl const &color
    , float intensity /*= 1.0f*/
-   , vec3 const &attenuation /*= vec3( 0, 0, 1 )*/ )
+   , vec3 const &attenuation /*= vec3( 0, 0, 1 )*/
+   , vec3 const &spec_attenuation /*= vec3( 0, 0, 1 )*/ )
 {
    light_data.light_position = vec4( pos, 1.0f );
    light_data.light_color = rgba_fl( color.r, color.g, color.b, intensity );
    light_data.attenuation = attenuation;
+   light_data.spec_attenuation = spec_attenuation;
+
+   light_cb->update( rhi_context, &light_data );
+}
+
+//------------------------------------------------------------------------
+void SimpleRenderer::set_specular_constants( float const spec_power
+   , float const spec_factor /*= 1.0f*/ )
+{
+   light_data.spec_factor = spec_factor;
+   light_data.spec_power = spec_power;
 
    light_cb->update( rhi_context, &light_data );
 }

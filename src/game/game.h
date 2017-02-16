@@ -106,6 +106,7 @@ class Game
       SimpleRenderer renderer;
 
       Texture2D *diffuse_texture;
+      Texture2D *normal_texture;
 
       eQuitReason quit_reason;
       GameState *current_state;

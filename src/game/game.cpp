@@ -194,7 +194,7 @@ void Game::render()
    // renderer.set_projection_matrix( mat44::IDENTITY );
    // renderer.set_ortho_projection( vec2(aspect_ratio * -5.0f, -5.0f), vec2(aspect_ratio * 5.0f, 5.0f) );
    float aspect_ratio = 1280.0f / 720.0f;
-   renderer.set_view_matrix( camera.get_inverse_orthonormal() );
+   renderer.set_camera_matrix( camera );
    renderer.set_perspective_projection( D2R(60.0f), aspect_ratio, 0.1f, 100.0f );
 
    renderer.enable_depth( true, true );
@@ -212,7 +212,12 @@ void Game::render()
    renderer.set_ambient_light( .2f );
    renderer.enable_point_light( light_pos, rgba_fl::WHITE, 4.0f );
    renderer.set_shader( renderer.light_shader );
-   renderer.set_texture2d( diffuse_texture );
+
+   // set textures
+   renderer.set_diffuse( diffuse_texture );
+   renderer.set_normal( normal_texture );
+   renderer.set_specular_constants( 32.0f, 1.0f ); 
+
 
    // Absolutely horrible way to draw a cube, but doing it for brevity
    // Front
@@ -260,6 +265,7 @@ void Game::init_rendering()
 
    // Create Resources
    diffuse_texture = new Texture2D( renderer.rhi_device, "image/stone_diffuse.png" );
+   normal_texture = new Texture2D( renderer.rhi_device, "image/stone_normal.png" );
 }
 
 //------------------------------------------------------------------------
@@ -267,6 +273,7 @@ void Game::cleanup_rendering()
 {
    // delete vb
    SAFE_DELETE(diffuse_texture);
+   SAFE_DELETE(normal_texture);
 
    // cleanup renderer
    renderer.destroy();

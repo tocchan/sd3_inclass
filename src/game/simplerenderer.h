@@ -50,9 +50,15 @@
 /************************************************************************/
 struct matrix_buffer_t
 {
+   matrix_buffer_t() 
+      : eye_position(0.0f)
+   {}
+
    mat44 model;
    mat44 view;
    mat44 projection;
+
+   vec4 eye_position;
 };
 
 struct time_buffer_t 
@@ -70,14 +76,23 @@ struct light_buffer_t
       , light_color(1, 1, 1, 0)
       , light_position(0, 0, 0, 1)
       , attenuation(1, 0, 0, 0)     // will effectively dampen the light - at intensity 1, this will make the light constant
+      , spec_attenuation(1, 0, 0, 0)
+      , spec_factor(0.0f)
+      , spec_power(1.0f)
    {}
 
    rgba_fl ambient;  // <r, g, b, intensity>
 
    // POINT LIGHT
-   rgba_fl light_color; // <r, g, b, intensity>
-   vec4 light_position; // <x, y, z, padding>  // variables can not cross a 16-byte boundary, so we pad out 
-   vec4 attenuation;    // <constant, linear, quadratic, unused>
+   rgba_fl light_color;   // <r, g, b, intensity>
+   vec4 light_position;   // <x, y, z, padding>  // variables can not cross a 16-byte boundary, so we pad out 
+   vec4 attenuation;      // <constant, linear, quadratic, unused>
+   vec4 spec_attenuation; // <constant, linear, quadratic, unused>
+
+   // SURFACE INFORMATION
+   float spec_factor;
+   float spec_power;
+   vec2 unused;
 };
 
 struct blend_state_t
@@ -139,6 +154,10 @@ class SimpleRenderer
       void set_view_matrix( mat44 const &view );
       void set_projection_matrix( mat44 const &proj );
 
+      // Setting a camera will set the view and eye position
+      void set_camera_matrix( mat44 const &camera ); 
+      void set_eye_position( vec3 const &eye_position );
+
       void set_ortho_projection( vec2 const &bottom_left, vec2 const &top_right );
       void set_perspective_projection( float const fov_radians, float aspect_ratio, float const nz, float const fz );
 
@@ -169,6 +188,12 @@ class SimpleRenderer
       void set_texture2d( uint texture_index, Texture2D *texture );
       inline void set_texture2d( Texture2D *texture ) { set_texture2d( 0, texture ); }
 
+      // other aliases
+      inline void set_diffuse( Texture2D *texture ) { set_texture2d( 0, (texture == nullptr) ? white_texture : texture ); }
+      inline void set_normal( Texture2D *texture ) { set_texture2d( 1, (texture == nullptr) ? flat_normal_texture : texture ); }
+      inline void set_spec( Texture2D *texture ) { set_texture2d( 2, (texture == nullptr) ? white_texture : texture ); }
+
+
       // [A02]
       void set_sampler( uint sampler_index, Sampler *sampler );
       inline void set_sampler( Sampler *sampler ) { set_sampler( 0, sampler ); }
@@ -177,11 +202,16 @@ class SimpleRenderer
 
       // LIGHTING
       void set_ambient_light( float intensity, rgba_fl const &color = rgba_fl::WHITE );
-
+      void set_specular_constants( float const spec_power, float const spec_factor = 1.0f );
+      
       // Goal of assignment is to support multiple of these
       // cone lights, directional lights, and point lights
       // spec maps, and TBN
-      void enable_point_light( vec3 const &pos, rgba_fl const &color, float intensity = 1.0f, vec3 const &attenuation = vec3( 0, 0, 1 ) );
+      void enable_point_light( vec3 const &pos
+         , rgba_fl const &color
+         , float intensity = 1.0f
+         , vec3 const &attenuation = vec3( 0, 0, 1 )
+         , vec3 const &spec_attenuation = vec3( 0, 0, 1 ) );
 
       // disabling a light is the same as setting it to have no intensity (it won't contribute any light)
       inline void disable_point_light() { enable_point_light( vec3(0.0f), rgba_fl::WHITE, 0.0f, vec3(1, 0, 0) ); }
@@ -225,6 +255,7 @@ class SimpleRenderer
 
       // DEFAUL TEXTURES
       Texture2D *white_texture;
+      Texture2D *flat_normal_texture;
 
       // RENDER TARGETS
       Texture2D *default_color_target;
