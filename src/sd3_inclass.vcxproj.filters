@@ -26,6 +26,7 @@
     <ClCompile Include="render\rhi\depthstencilstate.cpp" />
     <ClCompile Include="core\vector.cpp" />
     <ClCompile Include="core\time.cpp" />
+    <ClCompile Include="core\command.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game_config.h" />
@@ -59,5 +60,6 @@
     <ClInclude Include="render\rhi\depthstencilstate.h" />
     <ClInclude Include="core\vector.h" />
     <ClInclude Include="core\time.h" />
+    <ClInclude Include="core\command.h" />
   </ItemGroup>
 </Project>

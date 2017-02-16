@@ -5,8 +5,8 @@
 /************************************************************************/
 #include "game.h"
 
-// A01
 #include "core/types.h"
+#include "core/command.h"
 #include "core/image.h"
 #include "core/time.h"
 #include "game/game_config.h"
@@ -107,6 +107,8 @@ Game::~Game()
 //------------------------------------------------------------------------
 void Game::run()
 {
+   CommandRun( "help one two three" );
+
    start();
    while (is_running()) {
       run_frame();
