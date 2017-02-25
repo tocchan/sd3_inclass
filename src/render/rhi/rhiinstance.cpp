@@ -134,6 +134,15 @@ STATIC void RHIInstance::ReportLiveObjects()
       gRenderInstance->debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
    }
 }
+//------------------------------------------------------------------------
+STATIC void RHIInstance::SetDebugName( ID3D11DeviceChild *d3d_obj, char const *name ) 
+{
+   #if defined(_DEBUG)
+      if ((d3d_obj != nullptr) && (name != nullptr)) {
+         d3d_obj->SetPrivateData( WKPDID_D3DDebugObjectName, strlen(name) + 1, name ); 
+      }
+   #endif
+}
 
 //------------------------------------------------------------------------
 bool RHIInstance::create_output( RHIDevice **out_device, 

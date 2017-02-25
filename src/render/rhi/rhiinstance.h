@@ -70,6 +70,7 @@ class RHIInstance
       // STATICS
       static RHIInstance* GetInstance();
       static void ReportLiveObjects();
+      static void SetDebugName( ID3D11DeviceChild *d3d_obj, char const *name );
 };
 
 
